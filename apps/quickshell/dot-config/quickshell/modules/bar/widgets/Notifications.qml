@@ -45,17 +45,17 @@ WidgetContainer {
             topMargin: 2
             rightMargin: 2
         }
-        width: Math.max(14, badgeText.implicitWidth + 4)
-        height: 14
-        radius: 7
-        color: Colours.tPalette.m3error
+        width: Math.max(16, badgeText.implicitWidth + 5)
+        height: 16
+        radius: 8
+        color: Colours.palette.m3error
 
         StyledText {
             id: badgeText
             anchors.centerIn: parent
             text: NotificationService.count > 99 ? "99+" : String(NotificationService.count)
-            color: Colours.tPalette.m3onError
-            font.pixelSize: Appearance.font.sm - 2
+            color: Colours.palette.m3onError
+            font.pixelSize: Appearance.font.sm - 1
             font.bold: true
         }
     }
