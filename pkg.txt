@@ -1,0 +1,7 @@
+aur:quickshell-git
+ghostty
+hypridle
+hyprland
+hyprlock
+hyprpicker
+xdg-desktop-portal-hyprland

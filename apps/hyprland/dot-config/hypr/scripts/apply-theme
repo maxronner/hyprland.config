@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+THEME_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/theme"
+PALETTE_FILE="${THEME_DATA_DIR}/palette.json"
+RENDERER="$HOME/.local/lib/theme/render"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+TEMPLATE="$SCRIPT_DIR/../templates/theme.conf.tmpl"
+TARGET="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/theme.conf"
+HYPRLOCK_TEMPLATE="$SCRIPT_DIR/../templates/hyprlock-theme.conf.tmpl"
+HYPRLOCK_TARGET="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprlock-theme.conf"
+
+[[ -f "$PALETTE_FILE" ]] || exit 0
+[[ -x "$RENDERER" ]] || { echo "apply-theme[hyprland]: renderer missing: $RENDERER" >&2; exit 1; }
+
+if [[ "${1:-}" == "--check" ]]; then
+  "$RENDERER" --strict "$PALETTE_FILE" "$TEMPLATE" > /dev/null
+  "$RENDERER" --strict "$PALETTE_FILE" "$HYPRLOCK_TEMPLATE" > /dev/null
+  exit $?
+fi
+
+# Render templates, then strip '#' from color values for hyprland rgb() format
+"$RENDERER" "$PALETTE_FILE" "$TEMPLATE" - | sed 's/rgb(#/rgb(/g' > "$TARGET"
+"$RENDERER" "$PALETTE_FILE" "$HYPRLOCK_TEMPLATE" - | sed 's/rgb(#/rgb(/g' > "$HYPRLOCK_TARGET"
+
+if pgrep -x Hyprland > /dev/null 2>&1; then
+  # Apply border colors directly via hyprctl keyword to avoid reload flash
+  active=$(sed -n 's/.*col\.active_border = rgb(\(.*\))/\1/p' "$TARGET" | head -1)
+  inactive=$(sed -n 's/.*col\.inactive_border = rgb(\(.*\))/\1/p' "$TARGET" | head -1)
+  {
+    hyprctl keyword general:col.active_border "rgb($active)"
+    hyprctl keyword general:col.inactive_border "rgb($inactive)"
+    hyprctl keyword group:col.border_active "rgb($active)"
+    hyprctl keyword group:col.border_inactive "rgb($inactive)"
+  } >/dev/null 2>&1 || echo "apply-theme[hyprland]: keyword set failed" >&2
+fi

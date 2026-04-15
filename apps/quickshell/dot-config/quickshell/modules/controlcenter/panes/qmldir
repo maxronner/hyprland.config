@@ -1,0 +1,6 @@
+Audio 1.0 Audio.qml
+Network 1.0 Network.qml
+Bluetooth 1.0 Bluetooth.qml
+Notifications 1.0 Notifications.qml
+AppearancePane 1.0 AppearancePane.qml
+Session 1.0 Session.qml

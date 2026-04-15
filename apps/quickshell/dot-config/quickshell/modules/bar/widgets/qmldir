@@ -1,0 +1,15 @@
+DashboardToggle 1.0 DashboardToggle.qml
+Calendar 1.0 Calendar.qml
+Clock 1.0 Clock.qml
+Workspaces 1.0 Workspaces.qml
+Notifications 1.0 Notifications.qml
+Weather 1.0 Weather.qml
+Dog 1.0 Dog.qml
+Network 1.0 Network.qml
+Bluetooth 1.0 Bluetooth.qml
+PulseAudio 1.0 PulseAudio.qml
+Battery 1.0 Battery.qml
+Cpu 1.0 Cpu.qml
+Memory 1.0 Memory.qml
+Temperature 1.0 Temperature.qml
+IdleInhibitor 1.0 IdleInhibitor.qml

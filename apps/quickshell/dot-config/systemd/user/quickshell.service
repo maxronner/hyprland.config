@@ -1,0 +1,14 @@
+[Unit]
+Description=Quickshell status bar
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=QML_IMPORT_PATH=%h/.config/quickshell
+ExecStart=/usr/bin/quickshell
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=hyprland-session.target

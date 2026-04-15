@@ -1,0 +1,5 @@
+hyprland
+hypridle
+hyprpicker
+hyprlock
+xdg-desktop-portal-hyprland

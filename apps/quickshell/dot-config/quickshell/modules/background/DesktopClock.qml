@@ -1,0 +1,109 @@
+// modules/background/DesktopClock.qml
+// Time overlay on wallpaper. Configurable 9-point grid position.
+// Semi-transparent background for readability against any wallpaper.
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Layouts
+import config
+import services
+import "../../components"
+
+Item {
+    id: root
+
+    property string position: Config.pending.background?.desktopClock?.position ?? "bottom-right"
+    property real clockScale: Config.pending.background?.desktopClock?.scale ?? 1.0
+
+    anchors.fill: parent
+    anchors.margins: Appearance.padding.xl * 2
+
+    // Track whether initial position has been set (skip animation on first load)
+    property bool _ready: false
+    Component.onCompleted: {
+        clockCard.state = root.position;
+        Qt.callLater(() => { _ready = true; });
+    }
+    onPositionChanged: {
+        if (_ready) clockCard.state = position;
+    }
+
+    Rectangle {
+        id: clockCard
+
+        width: clockLayout.implicitWidth + Appearance.padding.xl * 2
+        height: clockLayout.implicitHeight + Appearance.padding.xl * 2
+        radius: Appearance.rounding.lg
+        color: Qt.rgba(0, 0, 0, 0.35)
+
+        scale: root.clockScale
+
+        states: [
+            State {
+                name: "top-left"
+                AnchorChanges { target: clockCard; anchors.top: root.top; anchors.left: root.left }
+            },
+            State {
+                name: "top-center"
+                AnchorChanges { target: clockCard; anchors.top: root.top; anchors.horizontalCenter: root.horizontalCenter }
+            },
+            State {
+                name: "top-right"
+                AnchorChanges { target: clockCard; anchors.top: root.top; anchors.right: root.right }
+            },
+            State {
+                name: "middle-left"
+                AnchorChanges { target: clockCard; anchors.verticalCenter: root.verticalCenter; anchors.left: root.left }
+            },
+            State {
+                name: "middle-center"
+                AnchorChanges { target: clockCard; anchors.verticalCenter: root.verticalCenter; anchors.horizontalCenter: root.horizontalCenter }
+            },
+            State {
+                name: "middle-right"
+                AnchorChanges { target: clockCard; anchors.verticalCenter: root.verticalCenter; anchors.right: root.right }
+            },
+            State {
+                name: "bottom-left"
+                AnchorChanges { target: clockCard; anchors.bottom: root.bottom; anchors.left: root.left }
+            },
+            State {
+                name: "bottom-center"
+                AnchorChanges { target: clockCard; anchors.bottom: root.bottom; anchors.horizontalCenter: root.horizontalCenter }
+            },
+            State {
+                name: "bottom-right"
+                AnchorChanges { target: clockCard; anchors.bottom: root.bottom; anchors.right: root.right }
+            }
+        ]
+
+        transitions: Transition {
+            AnchorAnimation {
+                duration: root._ready ? Appearance.anim.duration.expressiveDefault : 0
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Appearance.anim.expressiveDefaultSpatial
+            }
+        }
+
+        ColumnLayout {
+            id: clockLayout
+            anchors.centerIn: parent
+            spacing: Appearance.spacing.xs
+
+            StyledText {
+                Layout.alignment: Qt.AlignHCenter
+                text: Time.hours + ":" + Time.minutes
+                color: "#ffffff"
+                font.pixelSize: Appearance.font.xxl * 2 * root.clockScale
+                font.bold: true
+            }
+
+            StyledText {
+                Layout.alignment: Qt.AlignHCenter
+                text: Time.dateFull
+                color: Qt.rgba(1, 1, 1, 0.7)
+                font.pixelSize: Appearance.font.lg * root.clockScale
+            }
+        }
+    }
+}

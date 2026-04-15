@@ -1,0 +1,8 @@
+DateTimePanel 1.0 DateTimePanel.qml
+CalendarPanel 1.0 CalendarPanel.qml
+WeatherPanel 1.0 WeatherPanel.qml
+ResourcesPanel 1.0 ResourcesPanel.qml
+SystemInfoPanel 1.0 SystemInfoPanel.qml
+Sparkline 1.0 Sparkline.qml
+PerformancePanel 1.0 PerformancePanel.qml
+WeatherExpandedPanel 1.0 WeatherExpandedPanel.qml

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+THEME_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/theme"
+PALETTE_FILE="${THEME_DATA_DIR}/palette.json"
+TARGET="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes/color256-theme"
+
+[[ -f "$PALETTE_FILE" ]] || exit 0
+
+if [[ "${1:-}" == "--check" ]]; then
+  jq -e -r '.terminal_palette' "$PALETTE_FILE" > /dev/null 2>&1
+  exit $?
+fi
+
+content=$(jq -e -r '.terminal_palette' "$PALETTE_FILE") \
+  || { echo "apply-theme[ghostty]: terminal_palette key missing" >&2; exit 1; }
+
+# Atomic write
+target_dir=$(dirname "$TARGET")
+mkdir -p "$target_dir"
+tmp=$(mktemp "${target_dir}/.apply-theme.XXXXXX")
+trap 'rm -f "$tmp"' EXIT
+printf '%s\n' "$content" > "$tmp"
+mv "$tmp" "$TARGET"
+trap - EXIT
+
+# Reload running instances
+mapfile -t pids < <(pgrep -x ghostty 2>/dev/null || true)
+if (( ${#pids[@]} )); then
+  kill -USR2 "${pids[@]}" 2>/dev/null || echo "apply-theme[ghostty]: reload failed" >&2
+fi

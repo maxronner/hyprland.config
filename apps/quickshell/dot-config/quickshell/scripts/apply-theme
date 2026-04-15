@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${1:-}" == "--check" ]]; then
+  command -v quickshell >/dev/null 2>&1
+  exit $?
+fi
+
+# Signal quickshell to reload palette via IPC
+quickshell msg reload-theme reload 2>/dev/null \
+  || echo "apply-theme[quickshell]: theme reload failed (not running?)" >&2
