@@ -4,7 +4,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
-DOTS_LIB="${DOTFILES_LIB:-${REPO_ROOT}/../public/install/lib.sh}"
+DOTS_LIB="${DOTFILES_LIB:-${REPO_ROOT}/../install/lib.sh}"
 
 [[ -f "$DOTS_LIB" ]] || {
     echo "dots repo not found. Set DOTFILES_LIB or clone dots as sibling." >&2
