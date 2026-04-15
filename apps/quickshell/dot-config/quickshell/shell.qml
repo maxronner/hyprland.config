@@ -11,6 +11,7 @@ import "modules/controlcenter"
 import "modules/submap"
 import "modules/notifications"
 import "modules/background"
+import "modules/wallpaperpicker"
 
 ShellRoot {
     id: shell
@@ -19,10 +20,12 @@ ShellRoot {
     property bool dashboardVisible: false
     property bool controlCenterVisible: false
     property bool barVisible: true
+    property bool wallpaperPickerVisible: false
 
-    // Mutual exclusivity: opening one overlay closes the other
-    onDashboardVisibleChanged: { if (dashboardVisible) controlCenterVisible = false }
-    onControlCenterVisibleChanged: { if (controlCenterVisible) dashboardVisible = false }
+    // Mutual exclusivity: opening one overlay closes the others
+    onDashboardVisibleChanged: { if (dashboardVisible) { controlCenterVisible = false; wallpaperPickerVisible = false } }
+    onControlCenterVisibleChanged: { if (controlCenterVisible) { dashboardVisible = false; wallpaperPickerVisible = false } }
+    onWallpaperPickerVisibleChanged: { if (wallpaperPickerVisible) { dashboardVisible = false; controlCenterVisible = false } }
 
     // --- IPC handlers ---
     IpcHandler {
@@ -49,10 +52,16 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "toggle-wallpaper-picker"
+        function toggle() { shell.wallpaperPickerVisible = !shell.wallpaperPickerVisible }
+    }
+
+    IpcHandler {
         target: "close-overlays"
         function toggle() {
             shell.dashboardVisible = false
             shell.controlCenterVisible = false
+            shell.wallpaperPickerVisible = false
         }
     }
 
@@ -154,6 +163,35 @@ ShellRoot {
             offsetScale: shell.controlCenterVisible ? 0.0 : 1.0
 
             onDismissed: shell.controlCenterVisible = false
+        }
+    }
+
+    // --- Wallpaper Picker overlay ---
+    PanelWindow {
+        id: wallpaperPickerPanel
+
+        anchors {
+            top: true
+            left: true
+            right: true
+            bottom: true
+        }
+
+        exclusionMode: ExclusionMode.Normal
+        WlrLayershell.layer: WlrLayer.Overlay
+        focusable: true
+        visible: shell.wallpaperPickerVisible || pickerWrapper.offsetScale < 1.0
+
+        color: "transparent"
+
+        WallpaperPicker {
+            id: pickerWrapper
+            anchors.fill: parent
+
+            // 0 = visible, 1 = hidden
+            offsetScale: shell.wallpaperPickerVisible ? 0.0 : 1.0
+
+            onDismissed: shell.wallpaperPickerVisible = false
         }
     }
 
