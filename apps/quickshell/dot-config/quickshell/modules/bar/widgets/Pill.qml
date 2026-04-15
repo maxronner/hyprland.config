@@ -14,7 +14,9 @@ Rectangle {
     default property alias content: innerLayout.data
 
     Layout.fillWidth: true
-    implicitHeight: innerLayout.implicitHeight + Appearance.padding.sm * 2
+    Layout.leftMargin: Appearance.padding.xs
+    Layout.rightMargin: Appearance.padding.xs
+    implicitHeight: innerLayout.implicitHeight + Appearance.padding.xs * 2
 
     radius: Appearance.rounding.sm
     color: Colours.tPalette.m3surfaceContainerHigh
@@ -28,7 +30,7 @@ Rectangle {
             right: parent.right
             top: parent.top
             bottom: parent.bottom
-            margins: Appearance.padding.xs
+            margins: 2
         }
         spacing: Appearance.spacing.xs
     }

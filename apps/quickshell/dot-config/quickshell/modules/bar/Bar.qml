@@ -58,6 +58,8 @@ Rectangle {
         Calendar {}
         Clock {}
 
+        Item { Layout.preferredHeight: Appearance.spacing.xs }
+
         Pill {
             Network {}
             Bluetooth {}
