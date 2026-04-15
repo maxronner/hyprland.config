@@ -103,9 +103,11 @@ Item {
     }
 
     function _dismiss(): void {
-        if (_session && !_session.committed) {
-            _session.revert();
-            _session.destroy();
+        if (_session) {
+            if (!_session.committed) {
+                _session.revert();
+                _session.destroy();
+            }
             _session = null;
         }
         root.dismissed();
