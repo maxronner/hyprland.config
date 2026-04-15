@@ -34,6 +34,31 @@ Item {
     // ---- File scanning ----
     ListModel { id: wallpaperModel }
 
+    // Trigger scan when picker becomes visible (not at shell startup)
+    function scan(): void {
+        if (wallpaperModel.count > 0) {
+            // Already scanned — just re-select current wallpaper
+            _selectCurrent();
+            return;
+        }
+        scanProc.running = true;
+    }
+
+    function _selectCurrent(): void {
+        _ready = false;
+        let matchIndex = 0;
+        const current = WallpaperService.current;
+        for (let i = 0; i < wallpaperModel.count; i++) {
+            if (wallpaperModel.get(i).path === current) {
+                matchIndex = i;
+                break;
+            }
+        }
+        filmstripView.currentIndex = matchIndex;
+        filmstripView.positionViewAtIndex(matchIndex, ListView.Center);
+        Qt.callLater(() => { root._ready = true; });
+    }
+
     Process {
         id: scanProc
         command: [
@@ -45,7 +70,7 @@ Item {
             "-o", "-iname", "*.gif",
             "-o", "-iname", "*.bmp", ")"
         ]
-        running: true
+        running: false
         stdout: StdioCollector {
             onStreamFinished: {
                 const lines = this.text.trim().split("\n").filter(l => l.length > 0);
@@ -53,20 +78,7 @@ Item {
                 for (const line of lines) {
                     wallpaperModel.append({ path: line });
                 }
-
-                // Find index matching current wallpaper
-                let matchIndex = 0;
-                const current = WallpaperService.current;
-                for (let i = 0; i < wallpaperModel.count; i++) {
-                    if (wallpaperModel.get(i).path === current) {
-                        matchIndex = i;
-                        break;
-                    }
-                }
-                filmstripView.currentIndex = matchIndex;
-
-                // Enable preview handler after initial index is set
-                Qt.callLater(() => { root._ready = true; });
+                root._selectCurrent();
             }
         }
     }

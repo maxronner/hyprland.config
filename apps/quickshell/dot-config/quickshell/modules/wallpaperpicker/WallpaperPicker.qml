@@ -102,6 +102,7 @@ Item {
                 originalWallpaper: WallpaperService.current
             });
         }
+        filmstrip.scan();
     }
 
     function _dismiss(): void {
