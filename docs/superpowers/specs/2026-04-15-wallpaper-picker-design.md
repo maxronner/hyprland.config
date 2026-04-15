@@ -31,7 +31,21 @@ Follows the DashWrapper / ControlCenter pattern:
 | Slide direction | Up from bottom: `Translate { y: containerHeight * offsetScale }`. |
 | Scrim | Click-outside dismisses via `dismissed()` signal. |
 | Focus / keys | `focus: offsetScale < 1.0`, Escape fires `dismissed()`. |
-| Revert state | Stores `_originalWallpaper` (from `WallpaperService.current`) when the panel opens. On dismiss without commit, restores it via `WallpaperService._writeAtomic()`. |
+| Session state | Delegates to internal `PickerSession` QtObject (see below). |
+
+### PickerSession (internal QtObject)
+
+Separates session state from animation/layout concerns. Created when the panel opens,
+holds all mutable state for one picker interaction:
+
+- `originalWallpaper: string` — snapshot of `WallpaperService.current` on open.
+- `committed: bool` — set true when Enter/click fires the commit process.
+- `commitProcess: Process` — runs `wl-set-wallpaper <path>`.
+- `revert()` — if `!committed`, restores `originalWallpaper` via
+  `WallpaperService._writeAtomic()`.
+- On commit process `onFinished`: if exit code != 0, reverts to `originalWallpaper`
+  and surfaces a warning (console or notification). Panel is already visually gone at
+  this point — the session object stays alive until the process completes.
 
 ### WallpaperFilmstrip.qml (content)
 
@@ -41,9 +55,18 @@ Horizontal thumbnail strip, bottom-anchored, horizontally centered.
 
 - Single `Process` on creation: `find -L <dir> -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.bmp" \)`.
 - Wallpaper directory: `$WALLPAPER_DIR` env var, fallback `~/.local/share/wallpapers`.
-- Stdout lines parsed into a `ListModel` of `{ path: string }`.
+- Buffer stdout in a string accumulator. Parse into `ListModel` only on `onFinished`
+  (not `onReadyRead`) to avoid partial-line splits at buffer boundaries.
 - On populate, `currentIndex` set to the entry matching `WallpaperService.current`.
+  If no match (wallpaper was set from outside the directory), default to index 0
+  without triggering a preview — the current wallpaper is already displayed.
 - No re-scan while open.
+
+**Empty state:**
+
+- If the model is empty after scanning (directory missing or no image files),
+  show a centered message: "No wallpapers found" on the filmstrip area.
+  Panel still opens and can be dismissed normally.
 
 **Thumbnail rendering:**
 
@@ -55,7 +78,9 @@ Horizontal thumbnail strip, bottom-anchored, horizontally centered.
 
 **Navigation:**
 
-- Left / Right / h / l keys move `currentIndex`.
+- Left / Right / h / l keys move `currentIndex`. Wraps around (last→first, first→last).
+- `positionViewAtIndex(currentIndex, ListView.Center)` on every index change to keep
+  the highlight visible.
 - Enter or click commits.
 - Escape dismisses (reverts).
 
@@ -71,13 +96,17 @@ Two distinct levels of wallpaper application:
 
 ### Commit (Enter / click)
 
-- Runs `wl-set-wallpaper <path>` via `Process`.
+- Sets `PickerSession.committed = true`.
+- Runs `wl-set-wallpaper <path>` via `PickerSession.commitProcess`.
 - This triggers: symlink write, `thememanager auto --wallpaper`, QuickShell IPC reload.
-- Panel dismisses after process exits.
+- Panel dismisses immediately (feels snappy). Session object stays alive until
+  process completes.
+- On commit process failure (non-zero exit): reverts to `_originalWallpaper` via
+  `WallpaperService._writeAtomic()`, logs warning to console.
 
 ### Revert (Escape / scrim click)
 
-- `WallpaperService._writeAtomic(_originalWallpaper)` restores previous symlink.
+- Calls `PickerSession.revert()` — restores `_originalWallpaper` if `!committed`.
 - Crossfade reverts behind panel.
 - Panel dismisses.
 
@@ -87,7 +116,7 @@ Two distinct levels of wallpaper application:
 |------|--------|
 | `shell.qml` | New visibility state, IPC handler, PanelWindow for picker |
 | `hyprland.conf` | `$mod+O` keybind → `quickshell msg toggle-wallpaper-picker toggle` |
-| `modules/wallpaperpicker/WallpaperPicker.qml` | New — wrapper with slide animation, scrim, revert logic |
+| `modules/wallpaperpicker/WallpaperPicker.qml` | New — wrapper with slide animation, scrim, PickerSession for state/revert/commit |
 | `modules/wallpaperpicker/WallpaperFilmstrip.qml` | New — filmstrip ListView, file scanning, navigation, commit |
 
 ## Performance
