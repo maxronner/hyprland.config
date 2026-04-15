@@ -135,12 +135,13 @@ Item {
             Item {
                 anchors.fill: parent
 
-                // Rounded mask shape (not drawn)
+                // Rounded mask shape (not drawn, texture only)
                 Rectangle {
                     id: thumbnailMask
                     anchors.fill: parent
                     radius: Appearance.rounding.sm
                     visible: false
+                    layer.enabled: true
                 }
 
                 // Background for loading state
