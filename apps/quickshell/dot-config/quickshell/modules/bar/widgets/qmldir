@@ -13,3 +13,4 @@ Cpu 1.0 Cpu.qml
 Memory 1.0 Memory.qml
 Temperature 1.0 Temperature.qml
 IdleInhibitor 1.0 IdleInhibitor.qml
+Pill 1.0 Pill.qml

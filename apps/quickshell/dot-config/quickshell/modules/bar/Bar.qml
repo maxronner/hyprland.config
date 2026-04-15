@@ -37,32 +37,33 @@ Rectangle {
         }
         spacing: Appearance.spacing.sm
 
-        // ── Top group: navigation ──
         DashboardToggle {
             id: dashToggle
             active: root.dashboardVisible
             onClicked: root.dashboardToggled()
         }
-        Notifications {}
-        Weather {}
-        Dog {}
 
-        // ── Group gap ──
-        Item { Layout.preferredHeight: Appearance.spacing.md }
-
-        // ── Workspaces ──
-        Workspaces {}
+        Pill {
+            Notifications {}
+            Weather {}
+            Dog {}
+            Workspaces {}
+        }
 
         // ── Spacer pushes system widgets to the bottom ──
         Item { Layout.fillHeight: true }
 
-        // ── Bottom group: system status ──
         IdleInhibitor {}
+
         Calendar {}
         Clock {}
-        Network {}
-        Bluetooth {}
-        PulseAudio {}
+
+        Pill {
+            Network {}
+            Bluetooth {}
+            PulseAudio {}
+        }
+
         Battery {}
     }
 }
