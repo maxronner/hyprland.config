@@ -65,8 +65,8 @@ Item {
             Rectangle {
                 id: dot
                 anchors.centerIn: parent
-                width: wsItem.modelData.focused ? 16 : 6
-                height: wsItem.modelData.focused ? 16 : 6
+                width: wsItem.modelData.focused ? 14 : 8
+                height: wsItem.modelData.focused ? 14 : 8
                 radius: height / 2
                 color: wsItem.modelData.focused
                     ? Colours.palette.m3primary
