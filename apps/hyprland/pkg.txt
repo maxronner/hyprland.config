@@ -1,5 +1,7 @@
+aur:zen-browser-bin
 hyprland
 hypridle
 hyprpicker
 hyprlock
+playerctl
 xdg-desktop-portal-hyprland

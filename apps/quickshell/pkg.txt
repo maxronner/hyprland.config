@@ -1,1 +1,3 @@
 aur:quickshell-git
+curl
+power-profiles-daemon

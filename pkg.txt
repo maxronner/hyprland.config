@@ -1,7 +1,11 @@
 aur:quickshell-git
+aur:zen-browser-bin
+curl
 ghostty
 hypridle
 hyprland
 hyprlock
 hyprpicker
+playerctl
+power-profiles-daemon
 xdg-desktop-portal-hyprland
