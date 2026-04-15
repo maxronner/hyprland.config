@@ -4,6 +4,7 @@
 // keyboard navigation with wrap-around.
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Effects
 import QtCore
 import Quickshell
 import Quickshell.Io
@@ -131,11 +132,23 @@ Item {
             }
 
             // ---- Thumbnail ----
-            Rectangle {
+            Item {
                 anchors.fill: parent
-                radius: Appearance.rounding.sm
-                color: Colours.tPalette.m3surfaceContainerHigh
-                clip: true
+
+                // Rounded mask shape (not drawn)
+                Rectangle {
+                    id: thumbnailMask
+                    anchors.fill: parent
+                    radius: Appearance.rounding.sm
+                    visible: false
+                }
+
+                // Background for loading state
+                Rectangle {
+                    anchors.fill: parent
+                    radius: Appearance.rounding.sm
+                    color: Colours.tPalette.m3surfaceContainerHigh
+                }
 
                 Image {
                     id: thumbnailImg
@@ -145,6 +158,14 @@ Item {
                     asynchronous: true
                     fillMode: Image.PreserveAspectCrop
                     cache: true
+                    visible: false
+                }
+
+                MultiEffect {
+                    anchors.fill: thumbnailImg
+                    source: thumbnailImg
+                    maskEnabled: true
+                    maskSource: thumbnailMask
                 }
             }
 
