@@ -136,6 +136,7 @@ Item {
                 radius: Appearance.rounding.sm
                 color: Colours.tPalette.m3surfaceContainerHigh
                 clip: true
+                layer.enabled: true
 
                 Image {
                     id: thumbnailImg
