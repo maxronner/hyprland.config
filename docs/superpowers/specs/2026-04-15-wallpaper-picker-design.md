@@ -46,6 +46,10 @@ holds all mutable state for one picker interaction:
 - On commit process `onFinished`: if exit code != 0, reverts to `originalWallpaper`
   and surfaces a warning (console or notification). Panel is already visually gone at
   this point — the session object stays alive until the process completes.
+- **Lifetime:** Session self-destructs in `commitProcess.onFinished` (calls
+  `destroy()`). For non-commit dismissals, the wrapper destroys the session
+  immediately in its dismiss handler. Session lifetime is never tied to the
+  panel's visual lifecycle.
 
 ### WallpaperFilmstrip.qml (content)
 
@@ -60,6 +64,9 @@ Horizontal thumbnail strip, bottom-anchored, horizontally centered.
 - On populate, `currentIndex` set to the entry matching `WallpaperService.current`.
   If no match (wallpaper was set from outside the directory), default to index 0
   without triggering a preview — the current wallpaper is already displayed.
+  Use a `_ready` guard flag (false during initial population) so that setting
+  `currentIndex` during setup doesn't fire the preview handler via
+  `onCurrentIndexChanged`.
 - No re-scan while open.
 
 **Empty state:**
