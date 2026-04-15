@@ -55,8 +55,7 @@ Item {
         }
 
         // ---- Filmstrip content ----
-        // Placeholder until Task 3 — will become WallpaperFilmstrip
-        Rectangle {
+        WallpaperFilmstrip {
             id: filmstrip
             anchors {
                 left: parent.left
@@ -64,14 +63,17 @@ Item {
                 bottom: parent.bottom
                 margins: Appearance.padding.xl
             }
-            implicitHeight: 200
-            color: Colours.tPalette.m3surfaceContainer
-            radius: Appearance.rounding.md
+            focus: root.offsetScale < 1.0
 
-            StyledText {
-                anchors.centerIn: parent
-                text: "Wallpaper picker placeholder"
-                color: Colours.tPalette.m3onSurfaceVariant
+            onWallpaperPreviewed: path => {
+                WallpaperService._writeAtomic(path);
+            }
+
+            onWallpaperCommitted: path => {
+                if (root._session) {
+                    root._session.commit(path);
+                }
+                root.dismissed();
             }
         }
     }
@@ -88,8 +90,8 @@ Item {
     // ---- Keyboard handling ----
     Keys.onEscapePressed: root._dismiss()
 
-    // Accept focus so key events reach us
-    focus: root.offsetScale < 1.0
+    // Focus is delegated to the filmstrip
+    focus: false
 
     // ---- Session state ----
     property var _session: null
