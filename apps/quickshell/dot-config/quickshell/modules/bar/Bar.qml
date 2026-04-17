@@ -1,6 +1,7 @@
 // modules/bar/Bar.qml
 // M3 sidebar bar layout. Grouped widgets in a ColumnLayout.
-// Background: m3surfaceContainer, radius: md (17px).
+// No background of its own — the Background layer renders m3surface
+// behind the bar region.
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
@@ -10,7 +11,7 @@ import services
 import "../../components"
 import "widgets"
 
-Rectangle {
+Item {
     id: root
 
     // Dashboard toggle state passed in from BarWrapper / shell.qml
@@ -20,11 +21,6 @@ Rectangle {
     // Bar dimensions — width from Appearance token, fills parent height
     implicitWidth: Appearance.sizes.bar
     implicitHeight: parent?.height ?? 600
-
-    color: Colours.palette.m3surface
-    radius: Appearance.rounding.md
-
-    Behavior on color { CAnim {} }
 
     ColumnLayout {
         id: layout
