@@ -18,25 +18,19 @@ Item {
     anchors.fill: parent
     anchors.margins: Appearance.padding.xl * 2
 
-    // Track whether initial position has been set (skip animation on first load)
+    // Skip animation on first load; flip after first event-loop tick
     property bool _ready: false
-    Component.onCompleted: {
-        clockCard.state = root.position;
-        Qt.callLater(() => { _ready = true; });
-    }
-    onPositionChanged: {
-        if (_ready) clockCard.state = position;
-    }
+    Component.onCompleted: Qt.callLater(() => { _ready = true; })
 
     Rectangle {
         id: clockCard
+
+        state: root._ready ? root.position : ""
 
         width: clockLayout.implicitWidth + Appearance.padding.xl * 2
         height: clockLayout.implicitHeight + Appearance.padding.xl * 2
         radius: Appearance.rounding.lg
         color: Qt.rgba(0, 0, 0, 0.35)
-
-        scale: root.clockScale
 
         states: [
             State {
@@ -78,8 +72,9 @@ Item {
         ]
 
         transitions: Transition {
+            enabled: root._ready
             AnchorAnimation {
-                duration: root._ready ? Appearance.anim.duration.expressiveDefault : 0
+                duration: Appearance.anim.duration.expressiveDefault
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Appearance.anim.expressiveDefaultSpatial
             }
