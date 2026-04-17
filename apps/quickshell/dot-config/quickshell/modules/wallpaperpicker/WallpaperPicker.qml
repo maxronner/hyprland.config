@@ -66,7 +66,8 @@ Item {
             focus: root.offsetScale < 1.0
 
             onWallpaperPreviewed: path => {
-                WallpaperService._writeAtomic(path);
+                root._previewPath = path;
+                root._previewTimer.restart();
             }
 
             onWallpaperCommitted: path => {
@@ -96,6 +97,15 @@ Item {
     // ---- Session state ----
     property var _session: null
 
+    // ---- Preview debounce ----
+    property string _previewPath: ""
+    property var _previewTimer: Timer {
+        interval: 150
+        onTriggered: {
+            if (_previewPath) WallpaperService._writeAtomic(_previewPath);
+        }
+    }
+
     function _onOpened(): void {
         if (!_session) {
             _session = _sessionComponent.createObject(root, {
@@ -106,6 +116,8 @@ Item {
     }
 
     function _dismiss(): void {
+        _previewTimer.stop();
+        _previewPath = "";
         if (_session) {
             if (!_session.committed) {
                 _session.revert();
