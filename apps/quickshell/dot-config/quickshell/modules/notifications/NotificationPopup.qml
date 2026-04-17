@@ -22,8 +22,8 @@ PanelWindow {
     implicitHeight: toastColumn.implicitHeight
 
     margins {
-        top: 10
-        right: 10
+        top: Appearance.inset.gapOuter + Appearance.inset.gapInner
+        right: Appearance.inset.gapOuter + Appearance.inset.gapInner
     }
 
     exclusionMode: ExclusionMode.Normal
