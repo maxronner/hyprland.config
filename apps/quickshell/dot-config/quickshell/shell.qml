@@ -94,7 +94,6 @@ ShellRoot {
         margins {
             top: Appearance.spacing.xs
             bottom: Appearance.spacing.xs
-            left: Appearance.spacing.xs
         }
 
         // Reserve bar width + its left margin so tiled windows start at the

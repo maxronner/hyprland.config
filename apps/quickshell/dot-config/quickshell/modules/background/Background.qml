@@ -19,10 +19,9 @@ Variants {
 
         required property ShellScreen modelData
 
-        // Left inset = bar width + its left margin (bar sits flush against
-        // the wallpaper frame — no extra gap on this edge).
-        readonly property real leftInset:
-            Appearance.sizes.bar + Appearance.spacing.xs
+        // Left inset = bar width (bar sits flush against the wallpaper frame
+        // and against the screen edge — no extra gap on this edge).
+        readonly property real leftInset: Appearance.sizes.bar
 
         screen: modelData
         WlrLayershell.layer: WlrLayer.Background
