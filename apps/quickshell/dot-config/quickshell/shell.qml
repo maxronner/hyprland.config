@@ -124,7 +124,7 @@ ShellRoot {
             bottom: true
         }
 
-        exclusionMode: ExclusionMode.Normal
+        exclusionMode: ExclusionMode.Ignore
         WlrLayershell.layer: WlrLayer.Overlay
         focusable: true
         visible: shell.dashboardVisible || dashWrapper.offsetScale < 1.0
@@ -153,7 +153,7 @@ ShellRoot {
             bottom: true
         }
 
-        exclusionMode: ExclusionMode.Normal
+        exclusionMode: ExclusionMode.Ignore
         WlrLayershell.layer: WlrLayer.Overlay
         focusable: true
         visible: shell.controlCenterVisible || ccWrapper.offsetScale < 1.0
@@ -182,7 +182,7 @@ ShellRoot {
             bottom: true
         }
 
-        exclusionMode: ExclusionMode.Normal
+        exclusionMode: ExclusionMode.Ignore
         WlrLayershell.layer: WlrLayer.Overlay
         focusable: true
         visible: shell.wallpaperPickerVisible || pickerWrapper.offsetScale < 1.0
