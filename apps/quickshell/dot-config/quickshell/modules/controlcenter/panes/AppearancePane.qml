@@ -101,7 +101,7 @@ Item {
 
                 StyledSlider {
                     Layout.fillWidth: true
-                    value: (Appearance.rounding.scale - 0.5) / 1.5
+                    value: Appearance.rounding.scale
                     from: 0.5
                     to: 2.0
                     stepSize: 0.25
@@ -134,7 +134,7 @@ Item {
 
                 StyledSlider {
                     Layout.fillWidth: true
-                    value: (Appearance.font.scale - 0.5) / 1.5
+                    value: Appearance.font.scale
                     from: 0.5
                     to: 2.0
                     stepSize: 0.25
@@ -280,6 +280,77 @@ Item {
                 }
             }
 
+            // ======== WALLPAPER FRAME ========
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Colours.tPalette.m3outlineVariant
+                opacity: 0.5
+            }
+
+            StyledText {
+                text: "Wallpaper Frame"
+                font.pixelSize: Appearance.font.md
+                color: Colours.tPalette.m3onSurfaceVariant
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Appearance.spacing.sm
+
+                StyledText {
+                    text: "Outer gap"
+                    color: Colours.tPalette.m3onSurface
+                }
+
+                StyledSlider {
+                    Layout.fillWidth: true
+                    value: Appearance.inset.gapOuter
+                    from: 0
+                    to: 40
+                    stepSize: 1
+                    onMoved: newVal => Config.set("background.inset.gapOuter", newVal)
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Appearance.spacing.sm
+
+                StyledText {
+                    text: "Inner gap"
+                    color: Colours.tPalette.m3onSurface
+                }
+
+                StyledSlider {
+                    Layout.fillWidth: true
+                    value: Appearance.inset.gapInner
+                    from: 0
+                    to: 40
+                    stepSize: 1
+                    onMoved: newVal => Config.set("background.inset.gapInner", newVal)
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Appearance.spacing.sm
+
+                StyledText {
+                    text: "Radius"
+                    color: Colours.tPalette.m3onSurface
+                }
+
+                StyledSlider {
+                    Layout.fillWidth: true
+                    value: Appearance.inset.radius
+                    from: 0
+                    to: 60
+                    stepSize: 1
+                    onMoved: newVal => Config.set("background.inset.radius", newVal)
+                }
+            }
+
             // ======== DESKTOP CLOCK ========
             Rectangle {
                 Layout.fillWidth: true
@@ -394,7 +465,7 @@ Item {
 
                     StyledSlider {
                         Layout.fillWidth: true
-                        value: ((Config.pending.background?.desktopClock?.scale ?? 1.0) - 0.5) / 1.5
+                        value: Config.pending.background?.desktopClock?.scale ?? 1.0
                         from: 0.5
                         to: 2.0
                         stepSize: 0.25

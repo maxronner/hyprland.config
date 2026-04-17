@@ -17,11 +17,11 @@ Rectangle {
     property bool dashboardVisible: false
     signal dashboardToggled()
 
-    // Bar dimensions — 52px wide, fills parent height
-    implicitWidth: 52
+    // Bar dimensions — width from Appearance token, fills parent height
+    implicitWidth: Appearance.sizes.bar
     implicitHeight: parent?.height ?? 600
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: Colours.palette.m3surface
     radius: Appearance.rounding.md
 
     Behavior on color { CAnim {} }

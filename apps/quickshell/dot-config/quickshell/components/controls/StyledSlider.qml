@@ -11,18 +11,26 @@ import "../effects"
 Item {
     id: root
 
-    // Value in [0, 1] representing position along the track.
+    // Current value in [from, to]. Caller passes the raw value — the slider
+    // normalizes internally for rendering.
     property real value: 0.0
 
-    // Range mapping: emitted signal uses (from + value * (to - from))
+    // Value range.
     property real from: 0.0
     property real to: 1.0
 
     // 0 = continuous; >0 = discrete with tick marks
     property real stepSize: 0
 
-    // Emits the mapped value when user drags or clicks
+    // Emits the raw (mapped) value when user drags or clicks
     signal moved(real newValue)
+
+    // Normalized position in [0, 1] derived from value/from/to.
+    readonly property real _norm: {
+        const span = to - from;
+        if (span === 0) return 0;
+        return Math.max(0, Math.min(1, (value - from) / span));
+    }
 
     implicitWidth: 200
     implicitHeight: 20
@@ -42,7 +50,7 @@ Item {
             id: trackFill
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            width: root.value * parent.width
+            width: root._norm * parent.width
             height: parent.height
             radius: Appearance.rounding.full
             color: Colours.palette.m3primary
@@ -74,7 +82,7 @@ Item {
                 required property int index
 
                 readonly property real _pos: index * tickRepeater._spacing
-                readonly property bool _filled: _pos <= (root.value * trackBg.width) + 1
+                readonly property bool _filled: _pos <= (root._norm * trackBg.width) + 1
 
                 x: _pos - 2
                 anchors.verticalCenter: parent.verticalCenter
@@ -115,7 +123,7 @@ Item {
         radius: Appearance.rounding.full
         color: Colours.palette.m3primary
 
-        x: root.value * (root.width - width)
+        x: root._norm * (root.width - width)
         anchors.verticalCenter: parent.verticalCenter
 
         Behavior on x {

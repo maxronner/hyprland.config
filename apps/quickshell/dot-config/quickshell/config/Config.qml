@@ -101,6 +101,12 @@ QtObject {
             background: {
                 enabled: true,
                 wallpaperEnabled: true,
+                inset: {
+                    gap: null,
+                    gapOuter: null,
+                    gapInner: null,
+                    radius: null
+                },
                 desktopClock: {
                     enabled: false,
                     position: "bottom-right",

@@ -16,6 +16,9 @@ import "modules/wallpaperpicker"
 ShellRoot {
     id: shell
 
+    // Touch HyprSync singleton so it initializes and writes the gaps config.
+    readonly property var _hyprSync: HyprSync
+
     // --- Overlay visibility state ---
     property bool dashboardVisible: false
     property bool controlCenterVisible: false
@@ -86,15 +89,18 @@ ShellRoot {
             bottom: true
         }
 
-        implicitWidth: 52
+        implicitWidth: Appearance.sizes.bar
 
         margins {
-            top: 5
-            bottom: 5
-            left: 5
+            top: Appearance.spacing.xs
+            bottom: Appearance.spacing.xs
+            left: Appearance.spacing.xs
         }
 
-        exclusionMode: ExclusionMode.Auto
+        // Reserve bar width + its left margin so tiled windows start at the
+        // wallpaper frame, flush against the bar.
+        exclusionMode: ExclusionMode.Normal
+        exclusiveZone: Appearance.sizes.bar
         WlrLayershell.layer: WlrLayer.Top
         focusable: false
         visible: shell.barVisible

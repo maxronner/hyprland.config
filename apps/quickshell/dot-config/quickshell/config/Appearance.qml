@@ -128,6 +128,19 @@ QtObject {
     readonly property QtObject sizes: QtObject {
         readonly property int button:   40
         readonly property int listItem: 44
+        readonly property int bar:      52
+    }
+
+    // --- Inset frame ---
+    // Shared wallpaper/bar inset geometry. Single source of truth used by
+    // Background, the bar PanelWindow's exclusive zone, and HyprSync to keep
+    // tiled windows aligned with the wallpaper frame.
+    readonly property QtObject inset: QtObject {
+        readonly property var _cfg: Config.pending.background?.inset
+        readonly property real gap:      _cfg?.gap      ?? root.spacing.sm
+        readonly property real gapOuter: _cfg?.gapOuter ?? root.spacing.md
+        readonly property real gapInner: _cfg?.gapInner ?? root.spacing.md
+        readonly property real radius:   _cfg?.radius   ?? root.rounding.lg
     }
 
     // --- Transparency ---
