@@ -128,9 +128,11 @@ Item {
         root.dismissed();
     }
 
-    // Create session when panel becomes visible
+    // Create session + scan/position at the START of the open animation so
+    // the filmstrip is scrolled to the correct item before the drawer
+    // finishes sliding up. _session guards against repeated calls.
     onOffsetScaleChanged: {
-        if (offsetScale === 0.0) _onOpened();
+        if (offsetScale < 1.0 && !_session) _onOpened();
     }
 
     // ---- PickerSession component ----
