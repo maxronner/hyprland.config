@@ -73,7 +73,7 @@ Item {
                     required property var modelData
 
                     Layout.fillWidth: true
-                    implicitHeight: 44
+                    implicitHeight: Appearance.sizes.listItem
                     radius: Appearance.rounding.sm
                     readonly property bool _isDefault: modelData.name === AudioService.defaultOutput?.name
 
@@ -166,7 +166,7 @@ Item {
                     required property var modelData
 
                     Layout.fillWidth: true
-                    implicitHeight: 44
+                    implicitHeight: Appearance.sizes.listItem
                     radius: Appearance.rounding.sm
                     readonly property bool _isDefault: modelData.name === AudioService.defaultInput?.name
 

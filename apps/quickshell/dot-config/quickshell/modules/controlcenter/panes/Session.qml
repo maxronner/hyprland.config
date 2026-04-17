@@ -120,22 +120,9 @@ Item {
     }
 
     // ---- Inline confirmation dialog ----
-    // Semi-transparent scrim WITHIN the pane
-    Rectangle {
-        anchors.fill: parent
-        color: Colours.palette.m3scrim
-        opacity: root._confirmVisible ? 0.32 : 0
-        visible: opacity > 0
-
-        Behavior on opacity {
-            NumberAnimation { duration: 200 }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            enabled: root._confirmVisible
-            onClicked: root._cancelConfirm()
-        }
+    Scrim {
+        active: root._confirmVisible
+        onDismissed: root._cancelConfirm()
     }
 
     // Centered confirmation card
@@ -145,7 +132,7 @@ Item {
         opacity: root._confirmVisible ? 1.0 : 0.0
 
         Behavior on opacity {
-            NumberAnimation { duration: 200 }
+            NumberAnimation { duration: Appearance.anim.duration.sm }
         }
 
         Rectangle {
@@ -200,7 +187,7 @@ Item {
                     Rectangle {
                         id: cancelBtn
                         Layout.fillWidth: true
-                        implicitHeight: 40
+                        implicitHeight: Appearance.sizes.button
                         radius: Appearance.rounding.full
                         color: Colours.tPalette.m3secondaryContainer
 
@@ -226,7 +213,7 @@ Item {
                     // Confirm (filled error)
                     Rectangle {
                         Layout.fillWidth: true
-                        implicitHeight: 40
+                        implicitHeight: Appearance.sizes.button
                         radius: Appearance.rounding.full
                         color: Colours.palette.m3error
 

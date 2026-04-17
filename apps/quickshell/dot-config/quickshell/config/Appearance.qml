@@ -122,6 +122,14 @@ QtObject {
         }
     }
 
+    // --- Sizes ---
+    // Shared control heights. Buttons and list items use Material 3-ish touch
+    // targets; keep these in sync across panes and widgets for consistent UX.
+    readonly property QtObject sizes: QtObject {
+        readonly property int button:   40
+        readonly property int listItem: 44
+    }
+
     // --- Transparency ---
     readonly property QtObject transparency: QtObject {
         readonly property bool enabled: root._app.transparency?.enabled ?? false

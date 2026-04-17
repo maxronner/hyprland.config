@@ -18,8 +18,8 @@ Rectangle {
 
     signal clicked()
 
-    implicitWidth: 40
-    implicitHeight: 40
+    implicitWidth: Appearance.sizes.button
+    implicitHeight: Appearance.sizes.button
     radius: Appearance.rounding.md
 
     opacity: disabled ? 0.38 : 1.0

@@ -55,7 +55,7 @@ Item {
             // ---- Clear all button ----
             Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 40
+                implicitHeight: Appearance.sizes.button
                 radius: Appearance.rounding.sm
                 color: Colours.tPalette.m3surfaceContainerHigh
                 visible: notifRepeater.count > 0
