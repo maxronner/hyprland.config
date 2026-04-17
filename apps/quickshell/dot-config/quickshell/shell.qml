@@ -96,11 +96,9 @@ ShellRoot {
             bottom: Appearance.spacing.xs
         }
 
-        // Reserve bar width + its left margin so tiled windows start at the
-        // wallpaper frame, flush against the bar.
         exclusionMode: ExclusionMode.Normal
         exclusiveZone: Appearance.sizes.bar
-        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.layer: WlrLayer.Bottom
         focusable: false
         visible: shell.barVisible
 
