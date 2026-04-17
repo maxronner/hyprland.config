@@ -136,11 +136,22 @@ Item {
         }
 
         Rectangle {
+            id: dialogCard
             anchors.centerIn: parent
             width: Math.min(parent.width - Appearance.padding.xl * 2, 280)
             implicitHeight: dialogLayout.implicitHeight + Appearance.padding.xl * 2
             radius: Appearance.rounding.lg
             color: Colours.tPalette.m3surfaceContainerHigh
+
+            // Dialog pops in — orients user and emphasizes the weight of the decision.
+            scale: root._confirmVisible ? 1.0 : 0.94
+            Behavior on scale {
+                NumberAnimation {
+                    duration: Appearance.anim.duration.md
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: Appearance.anim.emphasizedDecel
+                }
+            }
 
             ColumnLayout {
                 id: dialogLayout
@@ -183,7 +194,7 @@ Item {
                     Layout.fillWidth: true
                     spacing: Appearance.spacing.sm
 
-                    // Cancel (tonal)
+                    // Cancel (tonal) — default focus; Return/Escape dismisses.
                     Rectangle {
                         id: cancelBtn
                         Layout.fillWidth: true
@@ -192,6 +203,13 @@ Item {
                         color: Colours.tPalette.m3secondaryContainer
 
                         focus: root._confirmVisible
+                        // Fixed width + color fade avoids layout shift when focus enters/leaves.
+                        border.width: 2
+                        border.color: activeFocus ? Colours.palette.m3onSecondaryContainer : "transparent"
+                        Behavior on border.color { ColorAnimation { duration: Appearance.anim.duration.xs } }
+
+                        scale: cancelLayer.pressed ? 0.97 : 1.0
+                        Behavior on scale { NumberAnimation { duration: Appearance.anim.duration.xs; easing.type: Easing.OutQuad } }
 
                         StyledText {
                             anchors.centerIn: parent
@@ -200,6 +218,7 @@ Item {
                         }
 
                         StateLayer {
+                            id: cancelLayer
                             radius: parent.radius
                             color: Colours.palette.m3onSecondaryContainer
                             clipRipple: true
@@ -210,12 +229,15 @@ Item {
                         Keys.onEscapePressed: root._cancelConfirm()
                     }
 
-                    // Confirm (filled error)
+                    // Confirm (filled error) — no keyboard activation; intentional friction.
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: Appearance.sizes.button
                         radius: Appearance.rounding.full
                         color: Colours.palette.m3error
+
+                        scale: confirmLayer.pressed ? 0.97 : 1.0
+                        Behavior on scale { NumberAnimation { duration: Appearance.anim.duration.xs; easing.type: Easing.OutQuad } }
 
                         StyledText {
                             anchors.centerIn: parent
@@ -224,6 +246,7 @@ Item {
                         }
 
                         StateLayer {
+                            id: confirmLayer
                             radius: parent.radius
                             color: Colours.palette.m3onError
                             clipRipple: true
@@ -261,6 +284,9 @@ Item {
 
         Behavior on color { CAnim {} }
 
+        scale: btnLayer.pressed ? 0.97 : 1.0
+        Behavior on scale { NumberAnimation { duration: Appearance.anim.duration.xs; easing.type: Easing.OutQuad } }
+
         ColumnLayout {
             id: btnLayout
             anchors.centerIn: parent
@@ -286,6 +312,7 @@ Item {
         }
 
         StateLayer {
+            id: btnLayer
             radius: parent.radius
             color: btn.accentType === "error"
                 ? Colours.palette.m3error
