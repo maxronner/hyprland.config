@@ -100,6 +100,8 @@ Item {
                 text: Time.dateFull
                 color: Colours.palette.m3onSurfaceVariant
                 font.pixelSize: Appearance.font.lg * root.clockScale
+                lineHeight: 1.0
+                lineHeightMode: Text.FixedHeight
             }
         }
     }
