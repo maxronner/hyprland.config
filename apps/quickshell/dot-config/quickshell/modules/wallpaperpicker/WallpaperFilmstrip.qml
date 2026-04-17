@@ -123,9 +123,7 @@ Item {
             required property int index
             required property string path
 
-            width: thumbnailImg.implicitWidth > 0
-                ? thumbnailImg.implicitWidth
-                : Math.round(filmstripView.height * 16 / 9)
+            width: Math.round(filmstripView.height * 16 / 9)
             height: filmstripView.height
 
             // ---- Highlight border ----
@@ -166,12 +164,24 @@ Item {
                 Image {
                     id: thumbnailImg
                     anchors.fill: parent
-                    source: "file://" + del.path
-                    sourceSize.height: 180
+                    source: "file://" + ThumbnailService.thumbPath(del.path)
                     asynchronous: true
                     fillMode: Image.PreserveAspectCrop
                     cache: true
                     visible: false
+
+                    Component.onCompleted: ThumbnailService.ensure(del.path)
+
+                    Connections {
+                        target: ThumbnailService
+                        function onReady(srcPath) {
+                            if (srcPath !== del.path) return;
+                            // Force reload in case cache was just generated.
+                            const s = thumbnailImg.source;
+                            thumbnailImg.source = "";
+                            thumbnailImg.source = s;
+                        }
+                    }
                 }
 
                 MultiEffect {

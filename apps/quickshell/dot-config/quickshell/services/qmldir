@@ -9,3 +9,4 @@ singleton NetworkService 1.0 NetworkService.qml
 singleton BluetoothService 1.0 BluetoothService.qml
 singleton NotificationService 1.0 NotificationService.qml
 singleton WallpaperService 1.0 WallpaperService.qml
+singleton ThumbnailService 1.0 ThumbnailService.qml
