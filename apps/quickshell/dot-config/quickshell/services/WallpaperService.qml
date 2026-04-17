@@ -57,16 +57,30 @@ QtObject {
     }
 
     // Atomic symlink swap: ln -sf
+    // Coalesces fast successive writes: the latest desired path always wins.
+    property string _desiredPath: ""
+
     property var _writeProc: Process {
         id: writeProc
         property string _path: ""
         command: ["ln", "-sf", _path, root._statePath]
         running: false
-        onExited: root._resolve()
+        onExited: {
+            root._resolve();
+            root._kickWrite();
+        }
     }
 
     function _writeAtomic(path) {
-        writeProc._path = path;
+        root._desiredPath = path;
+        _kickWrite();
+    }
+
+    function _kickWrite() {
+        if (writeProc.running) return;
+        if (!root._desiredPath) return;
+        writeProc._path = root._desiredPath;
+        root._desiredPath = "";
         writeProc.running = true;
     }
 }
