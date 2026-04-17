@@ -1,7 +1,8 @@
 // services/ThumbnailService.qml
 // XDG-compliant thumbnail cache for image files.
 // Cache path: $XDG_CACHE_HOME/thumbnails/large/<md5(file-uri)>.png (256px tall).
-// Generates on demand with a bounded worker pool; emits ready(srcPath) per file.
+// Sequential on-demand generation — delegates rely on `readyTick` changes to
+// refresh their bound Image source.
 pragma Singleton
 
 import QtQuick
@@ -19,76 +20,70 @@ QtObject {
     }
 
     readonly property int _thumbSize: 256
-    readonly property int _concurrency: 4
 
-    signal ready(string srcPath)
+    // Bumped after every worker exit. Consumers include this property in an
+    // Image.source binding to force Qt to re-load from disk once the cache
+    // file has been written. Cheap: cached reloads hit the Qt image cache.
+    property int readyTick: 0
 
     function thumbPath(srcPath: string): string {
         if (!srcPath) return "";
-        const hash = Qt.md5("file://" + srcPath);
-        return _cacheDir + "/" + hash + ".png";
+        return _cacheDir + "/" + Qt.md5("file://" + srcPath) + ".png";
     }
 
-    // Enqueue a path for cache-or-generate. Idempotent.
+    // Queue is a plain JS array of paths. `_current` is the path being
+    // processed right now (empty when idle). Both are only mutated from
+    // ensure/cancel/pump, which run on the main thread.
+    property var _queue: []
+    property string _current: ""
+
     function ensure(srcPath: string): void {
         if (!srcPath) return;
-        if (_inFlight[srcPath]) return;
-        if (_queued[srcPath]) return;
-        _queued[srcPath] = true;
-        _queue.push(srcPath);
+        if (srcPath === root._current) return;
+        if (root._queue.indexOf(srcPath) !== -1) return;
+        root._queue.push(srcPath);
         _pump();
     }
 
-    property var _queue: []
-    property var _queued: ({})
-    property var _inFlight: ({})
-    property var _workers: []
-
-    Component.onCompleted: {
-        for (let i = 0; i < _concurrency; i++) {
-            _workers.push(_workerComponent.createObject(root));
-        }
-        _pump();
+    function cancel(srcPath: string): void {
+        if (!srcPath) return;
+        const idx = root._queue.indexOf(srcPath);
+        if (idx !== -1) root._queue.splice(idx, 1);
     }
 
     function _pump(): void {
-        for (let i = 0; i < _workers.length; i++) {
-            const w = _workers[i];
-            if (w.running) continue;
-            if (_queue.length === 0) return;
-            const src = _queue.shift();
-            delete _queued[src];
-            _inFlight[src] = true;
-            w._src = src;
-            w._dst = thumbPath(src);
-            w.running = true;
-        }
+        if (worker.running) return;
+        if (root._queue.length === 0) return;
+        const src = root._queue.shift();
+        root._current = src;
+        worker._src = src;
+        worker._dst = thumbPath(src);
+        worker.running = true;
     }
 
-    property Component _workerComponent: Component {
-        Process {
-            property string _src: ""
-            property string _dst: ""
+    // Single static worker. Skip generation if cache exists and is newer
+    // than source. Atomic via .tmp + mv so partial files never load.
+    property var worker: Process {
+        id: worker
 
-            // Skip generation if cache exists and is newer than source.
-            // Atomic via .tmp + mv so partial files never load.
-            command: ["sh", "-c",
-                "src=\"$1\"; dst=\"$2\"; size=\"$3\"; " +
-                "if [ ! -e \"$dst\" ] || [ \"$src\" -nt \"$dst\" ]; then " +
-                "  mkdir -p \"$(dirname \"$dst\")\" && " +
-                "  magick \"$src\" -auto-orient -thumbnail \"x${size}\" \"${dst}.tmp.png\" && " +
-                "  mv \"${dst}.tmp.png\" \"$dst\"; " +
-                "fi",
-                "_", _src, _dst, String(root._thumbSize)]
+        property string _src: ""
+        property string _dst: ""
 
-            running: false
+        command: ["sh", "-c",
+            "src=\"$1\"; dst=\"$2\"; size=\"$3\"; " +
+            "if [ ! -e \"$dst\" ] || [ \"$src\" -nt \"$dst\" ]; then " +
+            "  mkdir -p \"$(dirname \"$dst\")\" && " +
+            "  magick \"$src\" -auto-orient -thumbnail \"x${size}\" \"${dst}.tmp.png\" && " +
+            "  mv \"${dst}.tmp.png\" \"$dst\"; " +
+            "fi",
+            "_", _src, _dst, String(root._thumbSize)]
 
-            onExited: (exitCode, exitStatus) => {
-                const src = _src;
-                delete root._inFlight[src];
-                root.ready(src);
-                root._pump();
-            }
+        running: false
+
+        onExited: (exitCode, exitStatus) => {
+            root._current = "";
+            root.readyTick++;
+            root._pump();
         }
     }
 }

@@ -164,24 +164,24 @@ Item {
                 Image {
                     id: thumbnailImg
                     anchors.fill: parent
-                    source: "file://" + ThumbnailService.thumbPath(del.path)
+                    // readyTick dependency forces a reload after the worker
+                    // writes a new cache file. Harmless for already-cached
+                    // images — Qt's image cache makes the reload free.
+                    source: (ThumbnailService.readyTick, "file://" + ThumbnailService.thumbPath(del.path))
                     asynchronous: true
                     fillMode: Image.PreserveAspectCrop
                     cache: true
                     visible: false
+                }
 
-                    Component.onCompleted: ThumbnailService.ensure(del.path)
-
-                    Connections {
-                        target: ThumbnailService
-                        function onReady(srcPath) {
-                            if (srcPath !== del.path) return;
-                            // Force reload in case cache was just generated.
-                            const s = thumbnailImg.source;
-                            thumbnailImg.source = "";
-                            thumbnailImg.source = s;
-                        }
-                    }
+                // Only enqueue thumbnails for delegates that have stayed
+                // instantiated for 25ms — skips items blown past during
+                // fast scrolling and avoids hammering the service.
+                Timer {
+                    interval: 25
+                    repeat: false
+                    running: true
+                    onTriggered: ThumbnailService.ensure(del.path)
                 }
 
                 MultiEffect {
