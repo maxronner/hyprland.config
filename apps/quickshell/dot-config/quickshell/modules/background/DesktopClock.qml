@@ -27,8 +27,8 @@ Item {
 
         state: root._ready ? root.position : ""
 
-        width: clockLayout.implicitWidth + Appearance.padding.xl * 2
-        height: clockLayout.implicitHeight + Appearance.padding.xl * 2
+        width: clockLayout.implicitWidth + Appearance.padding.lg * 2
+        height: clockLayout.implicitHeight + Appearance.padding.lg * 2
         radius: Appearance.rounding.lg
         color: Qt.rgba(0, 0, 0, 0.35)
 
@@ -83,20 +83,22 @@ Item {
         ColumnLayout {
             id: clockLayout
             anchors.centerIn: parent
-            spacing: Appearance.spacing.xs
+            spacing: Appearance.spacing.sm
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: Time.hours + ":" + Time.minutes
-                color: "#ffffff"
+                color: Colours.palette.m3onSurface
                 font.pixelSize: Appearance.font.xxl * 2 * root.clockScale
                 font.bold: true
+                lineHeight: 1.0
+                lineHeightMode: Text.FixedHeight
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: Time.dateFull
-                color: Qt.rgba(1, 1, 1, 0.7)
+                color: Colours.palette.m3onSurfaceVariant
                 font.pixelSize: Appearance.font.lg * root.clockScale
             }
         }
