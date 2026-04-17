@@ -1,5 +1,6 @@
 aur:quickshell-git
-aur:ttf-rubik-vf
+aur:ttf-rubik
 curl
 power-profiles-daemon
+ttf-jetbrains-mono-nerd
 ttf-material-symbols-variable
