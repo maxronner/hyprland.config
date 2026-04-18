@@ -45,7 +45,7 @@ PanelWindow {
             // Evict oldest non-critical if at max
             while (toastModel.count >= 4) {
                 let evicted = false;
-                for (let i = 0; i < toastModel.count; i++) {
+                for (let i = toastModel.count - 1; i >= 0; i--) {
                     if (toastModel.get(i).urgency !== NotificationUrgency.Critical) {
                         toastModel.remove(i);
                         evicted = true;
@@ -55,7 +55,7 @@ PanelWindow {
                 if (!evicted) break; // all critical, allow overflow
             }
 
-            toastModel.append({
+            toastModel.insert(0, {
                 notifId: notification.id,
                 appName: notification.appName || "",
                 appIcon: notification.appIcon || "",
