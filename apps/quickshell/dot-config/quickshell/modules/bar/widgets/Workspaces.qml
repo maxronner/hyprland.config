@@ -1,6 +1,6 @@
 // modules/bar/widgets/Workspaces.qml
 // Hyprland workspace indicators with M3 pill/dot style.
-// Active: 20px pill (m3primary). Inactive: 6px dot (m3onSurfaceVariant).
+// Active: primary pill. Inactive: surface-variant dot. Urgent: error tint.
 // Uses ListView for add/remove/displaced transitions.
 pragma ComponentBehavior: Bound
 import QtQuick
@@ -61,14 +61,16 @@ Item {
             width: workspaceList.width
             height: 20
 
-            // Pill for active, dot for inactive
+            // Pill for active, dot for inactive, error tint for urgent workspaces.
             Rectangle {
                 id: dot
                 anchors.centerIn: parent
                 width: wsItem.modelData.focused ? 14 : 8
                 height: wsItem.modelData.focused ? 14 : 8
                 radius: height / 2
-                color: wsItem.modelData.focused
+                color: wsItem.modelData.urgent
+                    ? Colours.palette.m3error
+                    : wsItem.modelData.focused
                     ? Colours.palette.m3primary
                     : Colours.tPalette.m3onSurfaceVariant
 
