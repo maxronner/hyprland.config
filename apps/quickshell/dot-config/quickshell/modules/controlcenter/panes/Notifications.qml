@@ -115,7 +115,7 @@ Item {
             // ---- Notification cards ----
             Repeater {
                 id: notifRepeater
-                model: NotificationService.notifications
+                model: [...NotificationService.notifications.values].reverse()
 
                 delegate: NotificationCard {
                     required property var modelData
