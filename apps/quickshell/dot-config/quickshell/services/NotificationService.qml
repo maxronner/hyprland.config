@@ -17,6 +17,8 @@ QtObject {
     // Toast popup data — ListModel for the toast UI to bind to
     property var toasts: ListModel {}
     readonly property int maxToasts: 4
+    // Cap tracked history to avoid unbounded RAM growth in the notification pane.
+    readonly property int maxTrackedNotifications: 150
 
     signal toastRequested(var notification)
 
@@ -55,6 +57,35 @@ QtObject {
         }
     }
 
+    function enforceTrackedNotificationLimit() {
+        const tracked = [...server.trackedNotifications.values];
+        let excess = tracked.length - root.maxTrackedNotifications;
+        if (excess <= 0) {
+            return;
+        }
+
+        // Prefer dropping non-critical notifications first to preserve critical alerts.
+        for (const notification of tracked) {
+            if (excess <= 0) {
+                break;
+            }
+            if (notification.urgency === NotificationUrgency.Critical) {
+                continue;
+            }
+            notification.dismiss();
+            excess--;
+        }
+
+        // If everything is critical and we still overflow, trim oldest notifications.
+        for (const notification of tracked) {
+            if (excess <= 0) {
+                break;
+            }
+            notification.dismiss();
+            excess--;
+        }
+    }
+
     property var server: NotificationServer {
         bodySupported: true
         bodyMarkupSupported: true
@@ -77,6 +108,7 @@ QtObject {
                 notification.closed.connect(() => { root.count = Math.max(0, root.count - 1); });
             }
             root.toastRequested(notification);
+            enforceTrackedNotificationLimit();
         }
     }
 }
