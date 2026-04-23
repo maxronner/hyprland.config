@@ -58,73 +58,35 @@ Rectangle {
         }
 
         // Distro row
-        RowLayout {
-            spacing: Appearance.spacing.sm
-
-            MaterialIcon {
-                icon:  "terminal"
-                size:  Appearance.font.lg
-                color: Colours.tPalette.m3primary
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                text:  root._info.distro || "—"
-                elide: Text.ElideRight
-            }
+        InfoRow {
+            Layout.fillWidth: true
+            icon: "terminal"
+            iconColor: Colours.tPalette.m3primary
+            primaryText: root._info.distro || "—"
         }
 
         // Hostname row
-        RowLayout {
-            spacing: Appearance.spacing.sm
-
-            MaterialIcon {
-                icon:  "developer_board"
-                size:  Appearance.font.lg
-                color: Colours.tPalette.m3primary
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                text:  root._info.hostname || "—"
-                elide: Text.ElideRight
-            }
+        InfoRow {
+            Layout.fillWidth: true
+            icon: "developer_board"
+            iconColor: Colours.tPalette.m3primary
+            primaryText: root._info.hostname || "—"
         }
 
         // Kernel row
-        RowLayout {
-            spacing: Appearance.spacing.sm
-
-            MaterialIcon {
-                icon:  "code"
-                size:  Appearance.font.lg
-                color: Colours.tPalette.m3secondary
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                text:  root._info.kernel || "—"
-                font.family:    Appearance.font.family.mono
-                font.pixelSize: Appearance.font.sm
-                elide: Text.ElideRight
-            }
+        InfoRow {
+            Layout.fillWidth: true
+            icon: "code"
+            iconColor: Colours.tPalette.m3secondary
+            primaryText: root._info.kernel || "—"
         }
 
         // Uptime row
-        RowLayout {
-            spacing: Appearance.spacing.sm
-
-            MaterialIcon {
-                icon:  "schedule"
-                size:  Appearance.font.lg
-                color: Colours.tPalette.m3secondary
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                text:  root._info.uptime || "—"
-                elide: Text.ElideRight
-            }
+        InfoRow {
+            Layout.fillWidth: true
+            icon: "schedule"
+            iconColor: Colours.tPalette.m3secondary
+            primaryText: root._info.uptime || "—"
         }
 
         Item { Layout.fillHeight: true }

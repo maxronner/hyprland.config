@@ -20,6 +20,11 @@ Item {
         property string condition: ""
     }
 
+    readonly property string dogWalkSeverity:
+        HomeAssistant.dogWalkMinutes > 360 ? "critical"
+      : HomeAssistant.dogWalkMinutes > 240 ? "warning"
+      : "normal"
+
     Timer {
         interval: 1800000
         running:  !HomeAssistant.available
@@ -109,11 +114,7 @@ Item {
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
                         text: "\uf1b0"
-                        color: {
-                            if (HomeAssistant.dogWalkMinutes > 360) return Colours.tPalette.m3error
-                            if (HomeAssistant.dogWalkMinutes > 240) return Colours.palette.m3tertiary
-                            return Colours.tPalette.m3onSurface
-                        }
+                        color: Colours.severityColor(root.dogWalkSeverity, Colours.tPalette.m3onSurface)
                         font.family:    Appearance.font.family.mono
                         font.pixelSize: 40
                         horizontalAlignment: Text.AlignHCenter
