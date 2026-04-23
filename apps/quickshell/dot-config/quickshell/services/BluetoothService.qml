@@ -14,6 +14,9 @@ QtObject {
     property string connectedDeviceAddress: ""
     property int batteryPercent: -1  // -1 = unknown/unavailable
 
+    readonly property int _normalPollInterval: 10000
+    readonly property int _unavailablePollInterval: 60000
+
     // --- Internal ---
 
     property bool _poweredResult: false
@@ -22,6 +25,13 @@ QtObject {
     property bool _poweredReady: false
     property bool _deviceReady: false
 
+    function _setStatusAndInterval(newStatus) {
+        status = newStatus;
+        _sharedTimer.interval = newStatus === "unavailable"
+            ? _unavailablePollInterval
+            : _normalPollInterval;
+    }
+
     function _checkReady() {
         if (!_poweredReady || !_deviceReady)
             return;
@@ -29,16 +39,14 @@ QtObject {
         _deviceReady = false;
 
         if (!_poweredResult && _deviceResult === "" && status === "loading") {
-            status = "unavailable";
-            _sharedTimer.interval = 60000;
+            _setStatusAndInterval("unavailable");
             return;
         }
 
         powered = _poweredResult;
         connectedDevice = _deviceResult;
         connectedDeviceAddress = _deviceAddress;
-        status = "available";
-        _sharedTimer.interval = 10000;
+        _setStatusAndInterval("available");
 
         // Fetch battery if we have a connected device
         if (_deviceAddress !== "") {
@@ -92,7 +100,7 @@ QtObject {
 
     // Single shared timer — triggers both processes together
     property var _sharedTimer: Timer {
-        interval: 10000
+        interval: root._normalPollInterval
         running: true
         repeat: true
         onTriggered: {

@@ -15,6 +15,9 @@ QtObject {
     // 0-100, only meaningful when connectionType === "wifi"
     property int signalStrength: 0
 
+    readonly property int _normalPollInterval: 10000
+    readonly property int _unavailablePollInterval: 60000
+
     // --- Internal ---
 
     // Connection info: NAME,TYPE,DEVICE
@@ -36,10 +39,7 @@ QtObject {
     }
 
     property var _timer: Timer {
-        interval: {
-            if (root.status === "unavailable") return 60000;
-            return 10000;
-        }
+        interval: root._normalPollInterval
         running: true
         repeat: true
         onTriggered: {
@@ -49,14 +49,20 @@ QtObject {
         }
     }
 
+    function _setStatusAndInterval(newStatus) {
+        status = newStatus;
+        _timer.interval = newStatus === "unavailable"
+            ? _unavailablePollInterval
+            : _normalPollInterval;
+    }
+
     function _handleConnResult(text) {
         if (text === "") {
             activeConnection = "";
             connectionType = "";
             signalStrength = 0;
             if (status === "loading" || status === "available") {
-                status = "unavailable";
-                _timer.interval = 60000;
+                _setStatusAndInterval("unavailable");
             }
             return;
         }
@@ -78,8 +84,7 @@ QtObject {
             signalStrength = 0;
         }
 
-        status = "available";
-        _timer.interval = 10000;
+        _setStatusAndInterval("available");
     }
 
     function _handleSignalResult(text) {
