@@ -167,6 +167,13 @@ QtObject {
 
     // --- Color utility helpers ---
 
+    // Shared severity → color mapping used by dashboard metrics.
+    function severityColor(severity, normalColor) {
+        if (severity === "critical") return tPalette.m3error;
+        if (severity === "warning") return palette.m3tertiary;
+        return normalColor;
+    }
+
     // Decompose a color into {h, s, l, a} components using QML color properties.
     // Qt returns hslHue = -1 for achromatic colors; clamp to 0.
     function _colorToHsla(c) {

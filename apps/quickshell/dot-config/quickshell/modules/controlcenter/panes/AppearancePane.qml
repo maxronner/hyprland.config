@@ -157,127 +157,23 @@ Item {
             }
 
             // M3 Default preset row
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: m3Row.implicitHeight + Appearance.padding.md * 2
-                radius: Appearance.rounding.sm
-                color: Appearance.anim.preset === "m3"
-                    ? Colours.tPalette.m3secondaryContainer
-                    : Colours.tPalette.m3surfaceContainerHigh
-
-                Behavior on color { CAnim {} }
-
-                RowLayout {
-                    id: m3Row
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        margins: Appearance.padding.md
-                    }
-                    spacing: Appearance.spacing.sm
-
-                    MaterialIcon {
-                        icon: "animation"
-                        size: Appearance.font.lg
-                        fill: Appearance.anim.preset === "m3" ? 1 : 0
-                        color: Appearance.anim.preset === "m3"
-                            ? Colours.palette.m3onSecondaryContainer
-                            : Colours.tPalette.m3onSurface
-                    }
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-
-                        StyledText {
-                            text: "M3 Default"
-                            font.pixelSize: Appearance.font.md
-                            color: Appearance.anim.preset === "m3"
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurface
-                        }
-
-                        StyledText {
-                            text: "Expressive spatial curves"
-                            font.pixelSize: Appearance.font.sm
-                            color: Appearance.anim.preset === "m3"
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurfaceVariant
-                        }
-                    }
-                }
-
-                StateLayer {
-                    radius: parent.radius
-                    color: Appearance.anim.preset === "m3"
-                        ? Colours.palette.m3onSecondaryContainer
-                        : Colours.palette.m3onSurface
-                    clipRipple: true
-                    onTapped: Config.set("appearance.anim.preset", "m3")
-                }
+            SelectableCardRow {
+                selected: Appearance.anim.preset === "m3"
+                icon: "animation"
+                iconFill: selected ? 1 : 0
+                primaryText: "M3 Default"
+                secondaryText: "Expressive spatial curves"
+                onTapped: Config.set("appearance.anim.preset", "m3")
             }
 
             // Snappy preset row
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: snappyRow.implicitHeight + Appearance.padding.md * 2
-                radius: Appearance.rounding.sm
-                color: Appearance.anim.preset === "snappy"
-                    ? Colours.tPalette.m3secondaryContainer
-                    : Colours.tPalette.m3surfaceContainerHigh
-
-                Behavior on color { CAnim {} }
-
-                RowLayout {
-                    id: snappyRow
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        margins: Appearance.padding.md
-                    }
-                    spacing: Appearance.spacing.sm
-
-                    MaterialIcon {
-                        icon: "speed"
-                        size: Appearance.font.lg
-                        fill: Appearance.anim.preset === "snappy" ? 1 : 0
-                        color: Appearance.anim.preset === "snappy"
-                            ? Colours.palette.m3onSecondaryContainer
-                            : Colours.tPalette.m3onSurface
-                    }
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-
-                        StyledText {
-                            text: "Snappy"
-                            font.pixelSize: Appearance.font.md
-                            color: Appearance.anim.preset === "snappy"
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurface
-                        }
-
-                        StyledText {
-                            text: "Tighter, faster transitions"
-                            font.pixelSize: Appearance.font.sm
-                            color: Appearance.anim.preset === "snappy"
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurfaceVariant
-                        }
-                    }
-                }
-
-                StateLayer {
-                    radius: parent.radius
-                    color: Appearance.anim.preset === "snappy"
-                        ? Colours.palette.m3onSecondaryContainer
-                        : Colours.palette.m3onSurface
-                    clipRipple: true
-                    onTapped: Config.set("appearance.anim.preset", "snappy")
-                }
+            SelectableCardRow {
+                selected: Appearance.anim.preset === "snappy"
+                icon: "speed"
+                iconFill: selected ? 1 : 0
+                primaryText: "Snappy"
+                secondaryText: "Tighter, faster transitions"
+                onTapped: Config.set("appearance.anim.preset", "snappy")
             }
 
             // ======== WALLPAPER FRAME ========

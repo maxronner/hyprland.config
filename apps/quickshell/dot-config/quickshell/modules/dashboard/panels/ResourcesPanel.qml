@@ -22,13 +22,6 @@ Rectangle {
     implicitWidth:  180
     implicitHeight: 120
 
-    // Helper: select severity color for a given metric
-    function severityColor(severity, trackColor) {
-        if (severity === "critical") return Colours.tPalette.m3error
-        if (severity === "warning")  return Colours.palette.m3tertiary
-        return trackColor
-    }
-
     RowLayout {
         anchors {
             fill: parent
@@ -65,7 +58,7 @@ Rectangle {
                         right:  parent.right
                     }
                     radius: Appearance.rounding.full
-                    color:  root.severityColor(PerformanceModel.cpuSeverity, Colours.tPalette.m3primary)
+                    color:  Colours.severityColor(PerformanceModel.cpuSeverity, Colours.tPalette.m3primary)
                     Behavior on color { CAnim {} }
 
                     height: parent.height * Math.min(PerformanceModel.cpuUsage / 100, 1.0)
@@ -111,7 +104,7 @@ Rectangle {
                         right:  parent.right
                     }
                     radius: Appearance.rounding.full
-                    color:  root.severityColor(PerformanceModel.memSeverity, Colours.tPalette.m3secondary)
+                    color:  Colours.severityColor(PerformanceModel.memSeverity, Colours.tPalette.m3secondary)
                     Behavior on color { CAnim {} }
 
                     height: parent.height * (PerformanceModel.memTotalGb > 0
@@ -158,7 +151,7 @@ Rectangle {
                         right:  parent.right
                     }
                     radius: Appearance.rounding.full
-                    color:  root.severityColor(PerformanceModel.tempSeverity, Colours.palette.m3tertiary)
+                    color:  Colours.severityColor(PerformanceModel.tempSeverity, Colours.palette.m3tertiary)
                     Behavior on color { CAnim {} }
 
                     // 100°C = full bar
