@@ -11,24 +11,9 @@ import "../../../components/controls"
 Item {
     id: root
 
-    // ---- Scrollable content ----
-    Flickable {
+    PaneScaffold {
         anchors.fill: parent
-        anchors.margins: Appearance.padding.lg
-        contentHeight: layout.implicitHeight
-        clip: true
-
-        ColumnLayout {
-            id: layout
-            width: parent.width
-            spacing: Appearance.spacing.md
-
-            // ---- Section label ----
-            StyledText {
-                text: "Audio"
-                font.pixelSize: Appearance.font.xl
-                color: Colours.tPalette.m3onSurface
-            }
+        title: "Audio"
 
             // ======== OUTPUT ========
             StyledText {
@@ -66,53 +51,19 @@ Item {
                 visible: AudioService.sinkList.length > 0
             }
 
-            Repeater {
-                model: AudioService.sinkList
+        Repeater {
+            model: AudioService.sinkList
 
-                delegate: Rectangle {
+            delegate: SelectableCardRow {
                     required property var modelData
 
-                    Layout.fillWidth: true
                     implicitHeight: Appearance.sizes.listItem
-                    radius: Appearance.rounding.sm
                     readonly property bool _isDefault: modelData.name === AudioService.defaultOutput?.name
-
-                    color: _isDefault
-                        ? Colours.tPalette.m3secondaryContainer
-                        : "transparent"
-
-                    Behavior on color { CAnim {} }
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: Appearance.padding.sm
-                        spacing: Appearance.spacing.sm
-
-                        MaterialIcon {
-                            icon: "speaker"
-                            size: Appearance.font.lg
-                            color: parent.parent._isDefault
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurface
-                        }
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: modelData.description || modelData.name || "Unknown Device"
-                            color: parent.parent._isDefault
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurface
-                            elide: Text.ElideRight
-                        }
-                    }
-
-                    StateLayer {
-                        radius: parent.radius
-                        color: _isDefault
-                            ? Colours.palette.m3onSecondaryContainer
-                            : Colours.palette.m3onSurface
-                        onTapped: AudioService.setDefaultSink(modelData)
-                    }
+                    selected: _isDefault
+                    unselectedColor: "transparent"
+                    icon: "speaker"
+                    primaryText: modelData.description || modelData.name || "Unknown Device"
+                    onTapped: AudioService.setDefaultSink(modelData)
                 }
             }
 
@@ -159,58 +110,23 @@ Item {
                 visible: AudioService.sourceList.length > 0
             }
 
-            Repeater {
-                model: AudioService.sourceList
+        Repeater {
+            model: AudioService.sourceList
 
-                delegate: Rectangle {
+            delegate: SelectableCardRow {
                     required property var modelData
 
-                    Layout.fillWidth: true
                     implicitHeight: Appearance.sizes.listItem
-                    radius: Appearance.rounding.sm
                     readonly property bool _isDefault: modelData.name === AudioService.defaultInput?.name
-
-                    color: _isDefault
-                        ? Colours.tPalette.m3secondaryContainer
-                        : "transparent"
-
-                    Behavior on color { CAnim {} }
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: Appearance.padding.sm
-                        spacing: Appearance.spacing.sm
-
-                        MaterialIcon {
-                            icon: "mic"
-                            size: Appearance.font.lg
-                            color: parent.parent._isDefault
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurface
-                        }
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: modelData.description || modelData.name || "Unknown Device"
-                            color: parent.parent._isDefault
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.tPalette.m3onSurface
-                            elide: Text.ElideRight
-                        }
-                    }
-
-                    StateLayer {
-                        radius: parent.radius
-                        color: _isDefault
-                            ? Colours.palette.m3onSecondaryContainer
-                            : Colours.palette.m3onSurface
-                        onTapped: AudioService.setDefaultSource(modelData)
-                    }
+                    selected: _isDefault
+                    unselectedColor: "transparent"
+                    icon: "mic"
+                    primaryText: modelData.description || modelData.name || "Unknown Device"
+                    onTapped: AudioService.setDefaultSource(modelData)
                 }
             }
 
-            // Bottom spacer
-            Item { implicitHeight: Appearance.padding.md }
-        }
+        // Bottom spacer
+        Item { implicitHeight: Appearance.padding.md }
     }
 }

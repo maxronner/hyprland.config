@@ -12,22 +12,9 @@ import "../../../components/controls"
 Item {
     id: root
 
-    Flickable {
+    PaneScaffold {
         anchors.fill: parent
-        anchors.margins: Appearance.padding.lg
-        contentHeight: layout.implicitHeight
-        clip: true
-
-        ColumnLayout {
-            id: layout
-            width: parent.width
-            spacing: Appearance.spacing.md
-
-            StyledText {
-                text: "Bluetooth"
-                font.pixelSize: Appearance.font.xl
-                color: Colours.tPalette.m3onSurface
-            }
+        title: "Bluetooth"
 
             // ---- Power toggle row ----
             Rectangle {
@@ -79,87 +66,61 @@ Item {
                 }
             }
 
-            // ---- Connected device ----
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: deviceRow.implicitHeight + Appearance.padding.md * 2
-                radius: Appearance.rounding.md
-                color: BluetoothService.connectedDevice !== ""
-                    ? Colours.tPalette.m3secondaryContainer
-                    : Colours.tPalette.m3surfaceContainerLow
-                visible: BluetoothService.powered
+        // ---- Connected device ----
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: deviceRow.implicitHeight + Appearance.padding.md * 2
+            radius: Appearance.rounding.md
+            color: BluetoothService.connectedDevice !== ""
+                ? Colours.tPalette.m3secondaryContainer
+                : Colours.tPalette.m3surfaceContainerLow
+            visible: BluetoothService.powered
 
-                Behavior on color { CAnim {} }
+            Behavior on color { CAnim {} }
 
-                RowLayout {
-                    id: deviceRow
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        margins: Appearance.padding.md
-                    }
-                    spacing: Appearance.spacing.sm
-
-                    MaterialIcon {
-                        icon: "headphones"
-                        size: Appearance.font.lg
-                        fill: BluetoothService.connectedDevice !== "" ? 1 : 0
-                        color: BluetoothService.connectedDevice !== ""
-                            ? Colours.palette.m3onSecondaryContainer
-                            : Colours.tPalette.m3onSurfaceVariant
-
-                        Behavior on color { CAnim {} }
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: BluetoothService.connectedDevice !== ""
-                            ? BluetoothService.connectedDevice
-                            : "No device connected"
-                        color: BluetoothService.connectedDevice !== ""
-                            ? Colours.palette.m3onSecondaryContainer
-                            : Colours.tPalette.m3onSurfaceVariant
-                        elide: Text.ElideRight
-                    }
+            InfoRow {
+                id: deviceRow
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    margins: Appearance.padding.md
                 }
+                icon: "headphones"
+                primaryText: BluetoothService.connectedDevice !== ""
+                    ? BluetoothService.connectedDevice
+                    : "No device connected"
+                primaryColor: BluetoothService.connectedDevice !== ""
+                    ? Colours.palette.m3onSecondaryContainer
+                    : Colours.tPalette.m3onSurfaceVariant
+                iconColor: BluetoothService.connectedDevice !== ""
+                    ? Colours.palette.m3onSecondaryContainer
+                    : Colours.tPalette.m3onSurfaceVariant
             }
-
-            // ---- Device list placeholder ----
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1
-                color: Colours.tPalette.m3outlineVariant
-                opacity: 0.5
-                visible: BluetoothService.powered
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: btPlaceholderRow.implicitHeight + Appearance.padding.lg * 2
-                radius: Appearance.rounding.md
-                color: Colours.tPalette.m3surfaceContainerLow
-                visible: BluetoothService.powered
-
-                RowLayout {
-                    id: btPlaceholderRow
-                    anchors.centerIn: parent
-
-                    MaterialIcon {
-                        icon: "info"
-                        size: Appearance.font.lg
-                        color: Colours.tPalette.m3onSurfaceVariant
-                    }
-
-                    StyledText {
-                        text: "Device scan requires bluetoothctl"
-                        color: Colours.tPalette.m3onSurfaceVariant
-                        font.pixelSize: Appearance.font.sm
-                    }
-                }
-            }
-
-            Item { implicitHeight: Appearance.padding.md }
         }
+
+        // ---- Device list placeholder ----
+        Separator {
+            visible: BluetoothService.powered
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: btPlaceholderRow.implicitHeight + Appearance.padding.lg * 2
+            radius: Appearance.rounding.md
+            color: Colours.tPalette.m3surfaceContainerLow
+            visible: BluetoothService.powered
+
+            InfoRow {
+                id: btPlaceholderRow
+                anchors.centerIn: parent
+                icon: "info"
+                primaryText: "Device scan requires bluetoothctl"
+                primaryColor: Colours.tPalette.m3onSurfaceVariant
+                iconColor: Colours.tPalette.m3onSurfaceVariant
+            }
+        }
+
+        Item { implicitHeight: Appearance.padding.md }
     }
 }
