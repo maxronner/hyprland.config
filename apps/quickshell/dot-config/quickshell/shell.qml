@@ -16,6 +16,81 @@ import "modules/wallpaperpicker"
 ShellRoot {
     id: shell
 
+    property bool activeWindowFullscreen: false
+
+    property var _fullscreenQueryProc: Process {
+        command: ["hyprctl", "activewindow", "-j"]
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                shell._applyActiveWindowFullscreen(this.text.trim())
+            }
+        }
+    }
+
+    function _coerceFullscreenFlag(value) {
+        if (typeof value === "boolean") {
+            return value;
+        }
+        if (typeof value === "number") {
+            return value !== 0;
+        }
+        if (typeof value === "string") {
+            const asNumber = Number(value);
+            if (!isNaN(asNumber)) {
+                return asNumber !== 0;
+            }
+            return value === "true";
+        }
+        return false;
+    }
+
+    function _applyActiveWindowFullscreen(rawOutput) {
+        if (rawOutput === "") {
+            activeWindowFullscreen = false;
+            return;
+        }
+
+        try {
+            const payload = JSON.parse(rawOutput);
+            if (!payload || typeof payload !== "object") {
+                activeWindowFullscreen = false;
+                return;
+            }
+
+            const fullscreenRaw = payload.fullscreen !== undefined
+                ? payload.fullscreen
+                : payload.fullscreenMode;
+
+            activeWindowFullscreen = _coerceFullscreenFlag(fullscreenRaw);
+        } catch (_err) {
+            console.warn("shell: failed to parse active window state", _err);
+            activeWindowFullscreen = false;
+        }
+    }
+
+    function _resyncActiveWindowFullscreen() {
+        if (_fullscreenQueryProc.running) {
+            _fullscreenQueryProc.running = false;
+        }
+        _fullscreenQueryProc.running = true;
+    }
+
+    property var _hyprlandEvents: Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            if (event.name === "fullscreen" || event.name === "activewindowv2") {
+                shell._resyncActiveWindowFullscreen();
+            }
+        }
+    }
+
+    readonly property real leftFrameWidth:
+        activeWindowFullscreen
+            ? Appearance.inset.gapOuter
+            : Math.max(barWrapper?.contentWidth ?? Appearance.sizes.bar,
+                       Appearance.inset.gapOuter)
+
     // Touch HyprSync singleton so it initializes and writes the gaps config.
     readonly property var _hyprSync: HyprSync
 
@@ -76,7 +151,16 @@ ShellRoot {
     // --- Background wallpaper ---
     Loader {
         active: Config.pending.background?.enabled ?? true
-        sourceComponent: Background {}
+        sourceComponent: Background {
+            leftInset: shell.leftFrameWidth
+        }
+    }
+
+    Loader {
+        active: Config.pending.background?.enabled ?? true
+        sourceComponent: FrameOverlay {
+            leftWidth: shell.leftFrameWidth
+        }
     }
 
     // --- Bar ---
@@ -92,21 +176,23 @@ ShellRoot {
         implicitWidth: Appearance.sizes.bar
 
         margins {
-            top: Appearance.spacing.xs
-            bottom: Appearance.spacing.xs
+            top: 0
+            bottom: 0
         }
 
         exclusionMode: ExclusionMode.Normal
         exclusiveZone: Appearance.sizes.bar
-        WlrLayershell.layer: WlrLayer.Bottom
+        WlrLayershell.layer: WlrLayer.Overlay
         focusable: false
-        visible: shell.barVisible
+        visible: shell.barVisible && !shell.activeWindowFullscreen
 
         color: "transparent"
 
         BarWrapper {
+            id: barWrapper
             anchors.fill: parent
             dashboardVisible: shell.dashboardVisible
+            fullscreen: shell.activeWindowFullscreen
             onDashboardToggleRequested: shell.dashboardVisible = !shell.dashboardVisible
         }
     }
@@ -199,6 +285,8 @@ ShellRoot {
     }
 
     // --- Notification toasts ---
+    Component.onCompleted: _resyncActiveWindowFullscreen()
+
     NotificationPopup {}
 
     // --- Submap hint ---

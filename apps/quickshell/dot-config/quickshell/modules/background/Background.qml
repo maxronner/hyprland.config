@@ -12,6 +12,10 @@ import config
 import services
 
 Variants {
+    id: root
+
+    property real leftInset: Appearance.sizes.bar
+
     model: Quickshell.screens
 
     PanelWindow {
@@ -19,9 +23,7 @@ Variants {
 
         required property ShellScreen modelData
 
-        // Left inset = bar width (bar sits flush against the wallpaper frame
-        // and against the screen edge — no extra gap on this edge).
-        readonly property real leftInset: Appearance.sizes.bar
+        readonly property real leftInset: root.leftInset
 
         screen: modelData
         WlrLayershell.layer: WlrLayer.Background

@@ -8,7 +8,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import config
 import services
 
@@ -17,6 +16,7 @@ Item {
 
     // Passed in from shell.qml
     property bool dashboardVisible: false
+    property bool fullscreen: false
 
     // Emitted when user clicks the dashboard toggle button inside Bar
     signal dashboardToggleRequested()
@@ -24,12 +24,8 @@ Item {
     readonly property bool persistent: Config.pending.bar?.persistent ?? true
 
     property bool _mouseOver: false
-    property bool _fullscreen: {
-        let w = Hyprland.activeWindow;
-        return w ? (w.fullscreen ?? false) : false;
-    }
-
-    readonly property bool _shouldShow: !_fullscreen && (persistent || _mouseOver)
+    readonly property bool _shouldShow: !fullscreen && (persistent || _mouseOver)
+    readonly property real contentWidth: bar.width
 
     clip: true
     anchors.fill: parent
@@ -40,13 +36,12 @@ Item {
         dashboardVisible: root.dashboardVisible
         onDashboardToggled: root.dashboardToggleRequested()
 
-        // Animate width: full (implicitWidth) when shown, 0 when hidden
         width: root._shouldShow ? implicitWidth : 0
         height: parent.height
 
         Behavior on width {
             NumberAnimation {
-                duration: Appearance.anim.duration.expressiveDefault  // 500 ms
+                duration: Appearance.anim.duration.expressiveDefault
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Appearance.anim.expressiveDefaultSpatial
             }
@@ -55,6 +50,7 @@ Item {
         clip: true
         visible: width > 0
     }
+
 
     // Hover detection strip — active in auto-hide mode only.
     MouseArea {
