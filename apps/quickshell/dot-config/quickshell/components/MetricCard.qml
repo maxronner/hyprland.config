@@ -13,7 +13,7 @@ Rectangle {
     property string value: ""
     property color valColor: Colours.tPalette.m3onSurface
 
-    default property alias content: contentHost.data
+    default property alias content: contentLayout.data
 
     color: Colours.tPalette.m3surfaceContainerLow
     radius: Appearance.rounding.md
@@ -44,6 +44,12 @@ Rectangle {
             id: contentHost
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            ColumnLayout {
+                id: contentLayout
+                anchors.fill: parent
+                spacing: 0
+            }
         }
     }
 }

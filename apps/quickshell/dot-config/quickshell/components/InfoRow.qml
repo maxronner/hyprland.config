@@ -30,6 +30,7 @@ RowLayout {
         spacing: 2
 
         StyledText {
+            Layout.fillWidth: true
             text: root.primaryText
             color: root.primaryColor
             font.pixelSize: Appearance.font.md
@@ -37,6 +38,7 @@ RowLayout {
         }
 
         StyledText {
+            Layout.fillWidth: true
             text: root.secondaryText
             color: root.secondaryColor
             font.pixelSize: Appearance.font.sm
