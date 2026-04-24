@@ -58,7 +58,9 @@ ShellRoot {
                 return;
             }
 
-            const fullscreenRaw = payload.fullscreen !== undefined
+            const fullscreenRaw = payload.fullscreenClient !== undefined
+                ? payload.fullscreenClient
+                : payload.fullscreen !== undefined
                 ? payload.fullscreen
                 : payload.fullscreenMode;
 
@@ -78,18 +80,22 @@ ShellRoot {
 
     property var _hyprlandEvents: Connections {
         target: Hyprland
+
         function onRawEvent(event) {
-            if (event.name === "fullscreen" || event.name === "activewindowv2") {
+            if (event.name === "fullscreen"
+                    || event.name === "activewindow"
+                    || event.name === "activewindowv2"
+                    || event.name === "workspace"
+                    || event.name === "workspacev2"
+                    || event.name === "focusedmon"
+                    || event.name === "focusedmonv2") {
                 shell._resyncActiveWindowFullscreen();
             }
         }
     }
 
     readonly property real leftFrameWidth:
-        activeWindowFullscreen
-            ? Appearance.inset.gapOuter
-            : Math.max(barWrapper?.contentWidth ?? Appearance.sizes.bar,
-                       Appearance.inset.gapOuter)
+        Math.max(Appearance.sizes.bar, Appearance.inset.gapOuter)
 
     // Touch HyprSync singleton so it initializes and writes the gaps config.
     readonly property var _hyprSync: HyprSync
@@ -157,10 +163,36 @@ ShellRoot {
     }
 
     Loader {
-        active: Config.pending.background?.enabled ?? true
+        active: (Config.pending.background?.enabled ?? true) && !shell.activeWindowFullscreen
         sourceComponent: FrameOverlay {
             leftWidth: shell.leftFrameWidth
         }
+    }
+
+    // --- Reserved gutter ---
+    PanelWindow {
+        id: barReservePanel
+
+        anchors {
+            top: true
+            left: true
+            bottom: true
+        }
+
+        implicitWidth: shell.leftFrameWidth
+
+        margins {
+            top: 0
+            bottom: 0
+        }
+
+        exclusionMode: ExclusionMode.Normal
+        exclusiveZone: Math.round(shell.leftFrameWidth)
+        WlrLayershell.layer: WlrLayer.Bottom
+        focusable: false
+        visible: true
+
+        color: "transparent"
     }
 
     // --- Bar ---
@@ -180,11 +212,10 @@ ShellRoot {
             bottom: 0
         }
 
-        exclusionMode: ExclusionMode.Normal
-        exclusiveZone: Math.round(shell.leftFrameWidth)
+        exclusionMode: ExclusionMode.Ignore
         WlrLayershell.layer: WlrLayer.Overlay
         focusable: false
-        visible: true
+        visible: shell.barVisible && !shell.activeWindowFullscreen
 
         color: "transparent"
 
