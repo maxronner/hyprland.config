@@ -1,10 +1,10 @@
 // modules/bar/BarWrapper.qml
-// Animated reveal wrapper for the M3 sidebar bar.
-// Handles slide-in/out animation, auto-hide on fullscreen, and hover-based
+// Reveal wrapper for the M3 sidebar bar.
+// Handles fullscreen/auto-hide width changes and hover-based
 // visibility when Config.pending.bar.persistent is false.
 //
 // This item lives inside the PanelWindow in shell.qml (anchors.fill: parent).
-// The PanelWindow owns the exclusive zone; BarWrapper handles animated content.
+// The PanelWindow owns the exclusive zone; BarWrapper handles the bar content.
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
@@ -38,14 +38,6 @@ Item {
 
         width: root._shouldShow ? implicitWidth : 0
         height: parent.height
-
-        Behavior on width {
-            NumberAnimation {
-                duration: Appearance.anim.duration.expressiveDefault
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.expressiveDefaultSpatial
-            }
-        }
 
         clip: true
         visible: width > 0

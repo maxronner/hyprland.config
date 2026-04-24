@@ -173,7 +173,7 @@ ShellRoot {
             bottom: true
         }
 
-        implicitWidth: Appearance.sizes.bar
+        implicitWidth: shell.leftFrameWidth
 
         margins {
             top: 0
@@ -181,10 +181,10 @@ ShellRoot {
         }
 
         exclusionMode: ExclusionMode.Normal
-        exclusiveZone: Appearance.sizes.bar
+        exclusiveZone: Math.round(shell.leftFrameWidth)
         WlrLayershell.layer: WlrLayer.Overlay
         focusable: false
-        visible: shell.barVisible && !shell.activeWindowFullscreen
+        visible: true
 
         color: "transparent"
 
@@ -192,7 +192,7 @@ ShellRoot {
             id: barWrapper
             anchors.fill: parent
             dashboardVisible: shell.dashboardVisible
-            fullscreen: shell.activeWindowFullscreen
+            fullscreen: shell.activeWindowFullscreen || !shell.barVisible
             onDashboardToggleRequested: shell.dashboardVisible = !shell.dashboardVisible
         }
     }
