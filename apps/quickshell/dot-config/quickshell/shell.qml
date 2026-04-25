@@ -16,83 +16,7 @@ import "modules/wallpaperpicker"
 ShellRoot {
     id: shell
 
-    property bool activeWindowFullscreen: false
-
-    property var _fullscreenQueryProc: Process {
-        command: ["hyprctl", "activewindow", "-j"]
-        running: false
-        stdout: StdioCollector {
-            onStreamFinished: {
-                shell._applyActiveWindowFullscreen(this.text.trim())
-            }
-        }
-    }
-
-    function _coerceFullscreenFlag(value) {
-        if (typeof value === "boolean") {
-            return value;
-        }
-        if (typeof value === "number") {
-            return value !== 0;
-        }
-        if (typeof value === "string") {
-            const asNumber = Number(value);
-            if (!isNaN(asNumber)) {
-                return asNumber !== 0;
-            }
-            return value === "true";
-        }
-        return false;
-    }
-
-    function _applyActiveWindowFullscreen(rawOutput) {
-        if (rawOutput === "") {
-            activeWindowFullscreen = false;
-            return;
-        }
-
-        try {
-            const payload = JSON.parse(rawOutput);
-            if (!payload || typeof payload !== "object") {
-                activeWindowFullscreen = false;
-                return;
-            }
-
-            const fullscreenRaw = payload.fullscreenClient !== undefined
-                ? payload.fullscreenClient
-                : payload.fullscreen !== undefined
-                ? payload.fullscreen
-                : payload.fullscreenMode;
-
-            activeWindowFullscreen = _coerceFullscreenFlag(fullscreenRaw);
-        } catch (_err) {
-            console.warn("shell: failed to parse active window state", _err);
-            activeWindowFullscreen = false;
-        }
-    }
-
-    function _resyncActiveWindowFullscreen() {
-        if (_fullscreenQueryProc.running) {
-            _fullscreenQueryProc.running = false;
-        }
-        _fullscreenQueryProc.running = true;
-    }
-
-    property var _hyprlandEvents: Connections {
-        target: Hyprland
-
-        function onRawEvent(event) {
-            if (event.name === "fullscreen"
-                    || event.name === "activewindow"
-                    || event.name === "activewindowv2"
-                    || event.name === "workspace"
-                    || event.name === "workspacev2"
-                    || event.name === "focusedmon"
-                    || event.name === "focusedmonv2") {
-                shell._resyncActiveWindowFullscreen();
-            }
-        }
-    }
+    readonly property bool activeWindowFullscreen: Hyprland.focusedWorkspace?.hasFullscreen ?? false
 
     readonly property real leftFrameWidth:
         Math.max(Appearance.sizes.bar, Appearance.inset.gapOuter)
@@ -316,7 +240,6 @@ ShellRoot {
     }
 
     // --- Notification toasts ---
-    Component.onCompleted: _resyncActiveWindowFullscreen()
 
     NotificationPopup {}
 

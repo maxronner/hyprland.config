@@ -74,21 +74,6 @@ Item {
                     ? Colours.palette.m3primary
                     : Colours.tPalette.m3onSurfaceVariant
 
-                Behavior on width {
-                    NumberAnimation {
-                        duration: Appearance.anim.duration.sm
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Appearance.anim.emphasizedDecel
-                    }
-                }
-                Behavior on height {
-                    NumberAnimation {
-                        duration: Appearance.anim.duration.sm
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Appearance.anim.emphasizedDecel
-                    }
-                }
-                Behavior on color { CAnim {} }
             }
 
             MouseArea {
@@ -98,25 +83,5 @@ Item {
             }
         }
 
-        // Add transition: fade + slide in from above
-        add: Transition {
-            NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Appearance.anim.duration.sm }
-            NumberAnimation { property: "y"; from: -10; duration: Appearance.anim.duration.sm; easing.type: Easing.BezierSpline; easing.bezierCurve: Appearance.anim.emphasizedDecel }
-        }
-
-        // Remove transition: fade out
-        remove: Transition {
-            NumberAnimation { property: "opacity"; to: 0; duration: Appearance.anim.duration.sm }
-        }
-
-        // Displaced: animate to new position
-        displaced: Transition {
-            NumberAnimation { properties: "y"; duration: Appearance.anim.duration.sm; easing.type: Easing.BezierSpline; easing.bezierCurve: Appearance.anim.emphasizedDecel }
-        }
-
-        // Populate: instant (no animation on first load)
-        populate: Transition {
-            NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 0 }
-        }
     }
 }
