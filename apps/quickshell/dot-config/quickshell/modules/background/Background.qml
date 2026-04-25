@@ -6,6 +6,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Widgets
 import config
@@ -14,7 +15,8 @@ import services
 Variants {
     id: root
 
-    property real leftInset: Appearance.sizes.bar
+    property real leftInsetWidth: Appearance.sizes.bar
+    property bool barVisible: true
 
     model: Quickshell.screens
 
@@ -23,7 +25,10 @@ Variants {
 
         required property ShellScreen modelData
 
-        readonly property real leftInset: root.leftInset
+        readonly property var monitor: Hyprland.monitorFor(win.modelData)
+        readonly property bool monitorFullscreen: monitor?.activeWorkspace?.hasFullscreen ?? false
+        readonly property bool barSuppressed: !root.barVisible || win.monitorFullscreen
+        readonly property real leftInset: win.barSuppressed ? Appearance.inset.gapOuter : root.leftInsetWidth
 
         screen: modelData
         WlrLayershell.layer: WlrLayer.Background

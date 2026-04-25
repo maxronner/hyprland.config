@@ -1,2 +1,4 @@
 BarWrapper 1.0 BarWrapper.qml
 Bar 1.0 Bar.qml
+BarSurfaces 1.0 BarSurfaces.qml
+BarRail 1.0 BarRail.qml

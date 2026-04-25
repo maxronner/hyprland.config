@@ -3,8 +3,8 @@
 // Handles fullscreen/auto-hide width changes and hover-based
 // visibility when Config.pending.bar.persistent is false.
 //
-// This item lives inside the PanelWindow in shell.qml (anchors.fill: parent).
-// The PanelWindow owns the exclusive zone; BarWrapper handles the bar content.
+// This item lives inside a top-level per-screen PanelWindow.
+// The PanelWindow owns the exclusive zone; BarWrapper owns the bar chrome + content.
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
@@ -14,7 +14,7 @@ import services
 Item {
     id: root
 
-    // Passed in from shell.qml
+    // Passed in from top-level bar surface owner
     property bool dashboardVisible: false
     property bool fullscreen: false
 
@@ -29,6 +29,19 @@ Item {
 
     clip: true
     anchors.fill: parent
+
+    // --- Bar chrome background ---
+    BarRail {
+        id: rail
+        anchors {
+            left: parent.left
+            top: parent.top
+            bottom: parent.bottom
+        }
+
+        width: root._shouldShow ? parent.width : 0
+        visible: width > 0
+    }
 
     // --- Bar content ---
     Bar {

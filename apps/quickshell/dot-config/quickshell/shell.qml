@@ -1,6 +1,5 @@
 import Quickshell
 import Quickshell.Io
-import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
 import services
@@ -15,8 +14,6 @@ import "modules/wallpaperpicker"
 
 ShellRoot {
     id: shell
-
-    readonly property bool activeWindowFullscreen: Hyprland.focusedWorkspace?.hasFullscreen ?? false
 
     readonly property real leftFrameWidth:
         Math.max(Appearance.sizes.bar, Appearance.inset.gapOuter)
@@ -82,74 +79,25 @@ ShellRoot {
     Loader {
         active: Config.pending.background?.enabled ?? true
         sourceComponent: Background {
-            leftInset: shell.leftFrameWidth
+            leftInsetWidth: shell.leftFrameWidth
+            barVisible: shell.barVisible
         }
     }
 
     Loader {
-        active: (Config.pending.background?.enabled ?? true) && !shell.activeWindowFullscreen
+        active: Config.pending.background?.enabled ?? true
         sourceComponent: FrameOverlay {
             leftWidth: shell.leftFrameWidth
+            barVisible: shell.barVisible
         }
-    }
-
-    // --- Reserved gutter ---
-    PanelWindow {
-        id: barReservePanel
-
-        anchors {
-            top: true
-            left: true
-            bottom: true
-        }
-
-        implicitWidth: shell.leftFrameWidth
-
-        margins {
-            top: 0
-            bottom: 0
-        }
-
-        exclusionMode: ExclusionMode.Normal
-        exclusiveZone: Math.round(shell.leftFrameWidth)
-        WlrLayershell.layer: WlrLayer.Bottom
-        focusable: false
-        visible: true
-
-        color: "transparent"
     }
 
     // --- Bar ---
-    PanelWindow {
-        id: barPanel
-
-        anchors {
-            top: true
-            left: true
-            bottom: true
-        }
-
-        implicitWidth: shell.leftFrameWidth
-
-        margins {
-            top: 0
-            bottom: 0
-        }
-
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
-        focusable: false
-        visible: shell.barVisible && !shell.activeWindowFullscreen
-
-        color: "transparent"
-
-        BarWrapper {
-            id: barWrapper
-            anchors.fill: parent
-            dashboardVisible: shell.dashboardVisible
-            fullscreen: shell.activeWindowFullscreen || !shell.barVisible
-            onDashboardToggleRequested: shell.dashboardVisible = !shell.dashboardVisible
-        }
+    BarSurfaces {
+        leftFrameWidth: shell.leftFrameWidth
+        dashboardVisible: shell.dashboardVisible
+        barVisible: shell.barVisible
+        onDashboardToggleRequested: shell.dashboardVisible = !shell.dashboardVisible
     }
 
     // --- Dashboard overlay ---

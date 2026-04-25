@@ -1,7 +1,6 @@
 // modules/bar/Bar.qml
 // M3 sidebar bar layout. Grouped widgets in a ColumnLayout.
-// No background of its own — the Background layer renders m3surface
-// behind the bar region.
+// No background of its own — BarWrapper/BarRail render the left chrome.
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts

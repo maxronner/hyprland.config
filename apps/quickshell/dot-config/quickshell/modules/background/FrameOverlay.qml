@@ -5,6 +5,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import config
 import services
@@ -13,6 +14,7 @@ Variants {
     id: root
 
     property real leftWidth: Appearance.sizes.bar
+    property bool barVisible: true
 
     model: Quickshell.screens
 
@@ -26,6 +28,11 @@ Variants {
         readonly property real gapOuter: Appearance.inset.gapOuter
         readonly property real radius: Appearance.inset.radius
         readonly property color surfaceColor: Colours.palette.m3surface
+        readonly property var monitor: Hyprland.monitorFor(frame.modelData)
+        readonly property bool monitorFullscreen: monitor?.activeWorkspace?.hasFullscreen ?? false
+        readonly property bool barSuppressed: !root.barVisible || frame.monitorFullscreen
+        readonly property bool overlayVisible: !frame.barSuppressed
+        readonly property real effectiveLeftWidth: frame.barSuppressed ? frame.gapOuter : frame.leftWidth
 
         PanelWindow {
             screen: frame.modelData
@@ -33,22 +40,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: Colours.palette.m3surface
-
-            anchors {
-                top: true
-                left: true
-                bottom: true
-            }
-
-            implicitWidth: frame.leftWidth
-        }
-
-        PanelWindow {
-            screen: frame.modelData
-            WlrLayershell.layer: WlrLayer.Top
-            exclusionMode: ExclusionMode.Ignore
-            focusable: false
-            color: Colours.palette.m3surface
+            visible: frame.overlayVisible
 
             anchors {
                 top: true
@@ -59,7 +51,7 @@ Variants {
             implicitHeight: frame.gapOuter
 
             margins {
-                left: frame.leftWidth
+                left: frame.effectiveLeftWidth
                 right: frame.gapOuter
             }
         }
@@ -71,6 +63,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: "transparent"
+            visible: frame.overlayVisible
 
             implicitWidth: frame.radius
             implicitHeight: frame.radius
@@ -81,7 +74,7 @@ Variants {
             }
 
             margins {
-                left: frame.leftWidth
+                left: frame.effectiveLeftWidth
                 top: frame.gapOuter
             }
 
@@ -121,6 +114,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: "transparent"
+            visible: frame.overlayVisible
 
             implicitWidth: frame.radius
             implicitHeight: frame.radius
@@ -171,6 +165,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: "transparent"
+            visible: frame.overlayVisible
 
             implicitWidth: frame.radius
             implicitHeight: frame.radius
@@ -181,7 +176,7 @@ Variants {
             }
 
             margins {
-                left: frame.leftWidth
+                left: frame.effectiveLeftWidth
                 bottom: frame.gapOuter
             }
 
@@ -221,6 +216,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: "transparent"
+            visible: frame.overlayVisible
 
             implicitWidth: frame.radius
             implicitHeight: frame.radius
@@ -278,6 +274,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: Colours.palette.m3surface
+            visible: frame.overlayVisible
 
             anchors {
                 top: true
@@ -294,6 +291,7 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             focusable: false
             color: Colours.palette.m3surface
+            visible: frame.overlayVisible
 
             anchors {
                 left: true
@@ -304,7 +302,7 @@ Variants {
             implicitHeight: frame.gapOuter
 
             margins {
-                left: frame.leftWidth
+                left: frame.effectiveLeftWidth
                 right: frame.gapOuter
             }
         }
