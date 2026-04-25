@@ -57,7 +57,7 @@ Variants {
 
             readonly property var monitor: Hyprland.monitorFor(surface.modelData)
             readonly property bool monitorFullscreen: monitor?.activeWorkspace?.hasFullscreen ?? false
-            readonly property bool surfaceVisible: root.barVisible && !barPanel.monitorFullscreen
+            readonly property bool wrapperFullscreen: !root.barVisible || barPanel.monitorFullscreen
 
             screen: surface.modelData
 
@@ -77,14 +77,14 @@ Variants {
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Top
             focusable: false
-            visible: barPanel.surfaceVisible
+            visible: root.barVisible
 
             color: "transparent"
 
             BarWrapper {
                 anchors.fill: parent
                 dashboardVisible: root.dashboardVisible
-                fullscreen: !barPanel.surfaceVisible
+                fullscreen: barPanel.wrapperFullscreen
                 onDashboardToggleRequested: root.dashboardToggleRequested()
             }
         }
