@@ -102,7 +102,7 @@ QtObject {
                 // If >60s elapsed since a 15s tick, system likely resumed from suspend
                 if (internal.lastWakeTick > 0 && (now - internal.lastWakeTick) > 60000) {
                     // Delay refresh to let network come up
-                    wakeRefresh.restart();
+                    internal.wakeRefresh.restart();
                 }
                 internal.lastWakeTick = now;
             }
