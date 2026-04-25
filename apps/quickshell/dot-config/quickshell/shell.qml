@@ -121,6 +121,8 @@ ShellRoot {
         DashWrapper {
             id: dashWrapper
             anchors.fill: parent
+            leftInsetWidth: shell.leftFrameWidth
+            barVisible: shell.barVisible
 
             // 0 = visible, 1 = hidden
             offsetScale: shell.dashboardVisible ? 0.0 : 1.0

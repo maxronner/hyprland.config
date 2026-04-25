@@ -17,6 +17,12 @@ Item {
 
     // 0 = visible, 1 = hidden. Driven by shell.qml.
     property real offsetScale: 1.0
+    property real leftInsetWidth: Math.max(Appearance.sizes.bar, Appearance.inset.gapOuter)
+    property bool barVisible: true
+
+    readonly property real frameLeftInset: root.barVisible ? root.leftInsetWidth : Appearance.inset.gapOuter
+    readonly property real frameTopInset: Appearance.inset.gapOuter
+    readonly property real dashboardInset: Appearance.inset.gapInner
 
     signal dismissed()
 
@@ -60,7 +66,9 @@ Item {
 
             anchors {
                 top: parent.top
-                horizontalCenter: parent.horizontalCenter
+                left: parent.left
+                topMargin: root.frameTopInset + root.dashboardInset
+                leftMargin: root.frameLeftInset + root.dashboardInset
             }
 
             screenWidth:  root.width
