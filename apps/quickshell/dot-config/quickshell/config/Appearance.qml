@@ -140,7 +140,7 @@ QtObject {
         readonly property real gap:      _cfg?.gap      ?? root.spacing.sm
         readonly property real gapOuter: _cfg?.gapOuter ?? root.spacing.md
         readonly property real gapInner: _cfg?.gapInner ?? root.spacing.md
-        readonly property real radius:   _cfg?.radius   ?? root.rounding.lg
+        readonly property real corner:   root.rounding.lg
     }
 
     // --- Transparency ---

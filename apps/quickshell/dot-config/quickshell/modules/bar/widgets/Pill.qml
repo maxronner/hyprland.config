@@ -18,7 +18,7 @@ Rectangle {
     Layout.rightMargin: Appearance.padding.xs
     implicitHeight: innerLayout.implicitHeight + Appearance.padding.xs * 2
 
-    radius: Appearance.rounding.sm
+    radius: Appearance.rounding.md
     color: Colours.tPalette.m3surfaceContainerHigh
 
     Behavior on color { CAnim {} }

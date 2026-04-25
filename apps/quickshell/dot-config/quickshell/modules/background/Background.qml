@@ -46,7 +46,7 @@ Variants {
         ClippingRectangle {
             id: frame
             color: "transparent"
-            radius: Appearance.inset.radius
+            radius: Appearance.inset.corner
             anchors.fill: parent
             anchors.leftMargin: win.leftInset
             anchors.topMargin: Appearance.inset.gapOuter

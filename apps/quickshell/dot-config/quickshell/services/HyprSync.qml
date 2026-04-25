@@ -29,7 +29,7 @@ QtObject {
     // (bar exclusion already reserves the outer portion).
     readonly property int gapOuterPx: Math.round(Appearance.inset.gapOuter)
     readonly property int gapInnerPx: Math.round(Appearance.inset.gapInner)
-    readonly property int radiusPx:   Math.round(Appearance.inset.radius)
+    readonly property int radiusPx:   Math.round(Appearance.inset.corner)
 
     property string _lastWritten: ""
 

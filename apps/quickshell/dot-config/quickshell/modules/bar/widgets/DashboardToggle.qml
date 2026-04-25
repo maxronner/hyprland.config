@@ -13,6 +13,8 @@ WidgetContainer {
 
     property bool active: false
 
+    radius: Appearance.rounding.md
+
     interactive: true
     tooltip: active ? "Close dashboard" : "Open dashboard"
 

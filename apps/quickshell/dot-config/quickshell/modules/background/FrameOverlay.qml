@@ -26,7 +26,7 @@ Variants {
         // Keep geometry sourced from existing Appearance/Config bindings.
         readonly property real leftWidth: root.leftWidth
         readonly property real gapOuter: Appearance.inset.gapOuter
-        readonly property real radius: Appearance.inset.radius
+        readonly property real radius: Appearance.inset.corner
         readonly property color surfaceColor: Colours.palette.m3surface
         readonly property var monitor: Hyprland.monitorFor(frame.modelData)
         readonly property bool monitorFullscreen: monitor?.activeWorkspace?.hasFullscreen ?? false

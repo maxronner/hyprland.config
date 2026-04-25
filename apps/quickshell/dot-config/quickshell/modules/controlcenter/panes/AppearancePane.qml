@@ -228,25 +228,6 @@ Item {
                 }
             }
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: Appearance.spacing.sm
-
-                StyledText {
-                    text: "Radius"
-                    color: Colours.tPalette.m3onSurface
-                }
-
-                StyledSlider {
-                    Layout.fillWidth: true
-                    value: Appearance.inset.radius
-                    from: 0
-                    to: 60
-                    stepSize: 1
-                    onMoved: newVal => Config.set("background.inset.radius", newVal)
-                }
-            }
-
             // ======== DESKTOP CLOCK ========
             Rectangle {
                 Layout.fillWidth: true
