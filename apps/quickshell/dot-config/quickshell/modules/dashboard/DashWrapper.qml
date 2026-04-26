@@ -66,10 +66,10 @@ Item {
 
             anchors {
                 top: parent.top
-                left: parent.left
+                horizontalCenter: parent.horizontalCenter
                 topMargin: root.frameTopInset + root.dashboardInset
-                leftMargin: root.frameLeftInset + root.dashboardInset
             }
+            anchors.horizontalCenterOffset: root.frameLeftInset / 2
 
             screenWidth:  root.width
             screenHeight: root.height
